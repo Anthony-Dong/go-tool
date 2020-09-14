@@ -1,4 +1,4 @@
-module github.com/anthony-dong/aliyun-oss-cli
+module github.com/anthony-dong/upload-file-cli
 
 go 1.13
 
