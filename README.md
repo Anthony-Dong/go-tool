@@ -58,18 +58,16 @@ upload
 
 ## 3、如何使用
 
-1、将执行文件导出到环境变量里
-
-2、配置`aliyun-oss-upload-config.json` 文件
-
-3、直接在目录执行 upload命令，参数是上传的文件路径。生成的文件名称是 `前缀/当前年/当前年-月/uuid.文件格式 `
+- 1、将执行文件导出到环境变量里
+- 2、配置`aliyun-oss-upload-config.json` 文件
+- 3、直接在目录执行 upload命令，参数是上传的文件路径。生成的文件名称是 `前缀/当前年/当前年-月/uuid.文件格式 `
 
 ```shell
 ➜  /data upload ./Main.java
 https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/dc9d4b9a81424e66b73b968fab11a69d.java
 ```
 
-4、命令行提示：
+- 4、命令行提示：
 
 ```shell
 ➜  aliyun-oss-client-master git:(master) ✗ bin/upload -h        
@@ -81,3 +79,14 @@ Usage: upload ./Main.java -config=aliyun-oss-upload-config.json
   -h    this help
 ```
 
+
+
+## 4、配合Typora
+
+- 1、只需要修改配置即可，十分方便
+
+<img src="https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/e9842bc0463d4900977f4bfe3b43799d.png" alt="image-20200914142037902" style="zoom:50%;" />
+
+- 2、如果没有自动上传，手动点击一下即可
+
+<img src="https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/02a89c4813f3433c8543fb4e5e1db657.png" alt="image-20200914142207048" style="zoom:50%;" />
