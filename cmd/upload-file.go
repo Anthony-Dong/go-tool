@@ -56,7 +56,7 @@ func main() {
 	if err != nil {
 		logger.FatalF("upload file err,err=%s,path=%s,err=%+v", putPath, err)
 	}
-	fmt.Print(fileInfo.GetOSSUrl(ossConfig))
+	fmt.Println(fileInfo.GetOSSUrl(ossConfig))
 }
 
 func getUploadFile() (string, error) {

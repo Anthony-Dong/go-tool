@@ -2,11 +2,12 @@ package config
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/anthony-dong/upload-file-cli/cli"
 
 	"github.com/anthony-dong/upload-file-cli/logger"
 	"github.com/anthony-dong/upload-file-cli/util"
@@ -31,8 +32,7 @@ func GetOssConfig() *Config {
 }
 
 func init() {
-	flag.StringVar(&filePath, "-config", "aliyun-oss-upload-config.json", "配置文件位置")
-	flag.Parse()
+	filePath = cli.FilePath
 	absPath, err := filepath.Abs(filePath)
 	if err != nil {
 		logger.FatalF("get file path err,err=%+v", err)
