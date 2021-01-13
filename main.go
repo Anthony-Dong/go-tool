@@ -20,7 +20,7 @@ func main() {
 	//os.Args = []string{os.Args[0], "-v"}
 	//os.Args = []string{os.Args[0], "upload", "-h"}
 	//os.Args = []string{os.Args[0], "upload", "--log", "fatal", "-f", "./go.mod"}
-	os.Args = []string{os.Args[0], "upload", "-f", "./go.mod", "-d", "base64"}
+	//os.Args = []string{os.Args[0], "upload", "-f", "./go.mod", "-d", "base64"}
 	app := &cli.App{
 		Name:         filepath.Base(os.Args[0]),
 		HelpName:     filepath.Base(os.Args[0]),
