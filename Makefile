@@ -10,9 +10,9 @@
 # 项目路径
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 # 二进制文件输出位置
-GOBUILD_OUT_FILE := bin/upload
+GOBUILD_OUT_FILE := bin/go-tool
 # 主函数入口
-GOBUILD_MAIN_FILE := cmd/upload-file.go
+GOBUILD_MAIN_FILE := main.go
 # go build参数 -gcflags "-N -l" 参数 -N 来禁用优化，使用 -l 来禁用内联
 GOBUILD_ARGS := go build -race -v -ldflags "-s -w"
 # 属否使用vendor模式
@@ -20,8 +20,6 @@ GOMOD_VENDOR :=
 ifeq ($(vendor),true)
 	GOMOD_VENDOR := -mod=vendor
 endif
-# go mod name
-GO_MOD_NAME := $(word 2,$(shell cat `go env GOMOD` | head  -n 1))
 # go test 相关
 GO_TEST_FUNC_NAME := $(test_func)
 GO_TEST_PKG_NAME := $(test_pkg)
@@ -29,10 +27,7 @@ ifndef GO_TEST_PKG_NAME
 	GO_TEST_PKG_NAME := ./...
 endif
 # go-test-all 测试的文件
-GO_TEST_ALL_PKG := $(shell go list ./... | \
-                       	grep -v $(GO_MOD_NAME)/cmd \
-                     )
-
+GO_TEST_ALL_PKG := $(shell go list ./...)
 # Go的全局的环境变量。GOFLAGS必须清空，防止其他参数干扰
 GOFLAGS :=
 GO111MODULE := on
@@ -47,7 +42,7 @@ export GOFLAGS
 GO_DIFF_FILE := $(shell git diff --name-only --diff-filter=ACM | grep '.go' | grep -v vendor | grep -v _test.go)
 
 # 防止本地文件有重名的问题
-.PHONY : all build fmt gofmt goimports govet golint clean get test testall
+.PHONY : all build fmt gofmt goimports golint clean get test testall
 
 # make默认启动
 all: build
@@ -56,7 +51,7 @@ all: build
 build: clean fmt
 	$(GOBUILD_ARGS) $(GOMOD_VENDOR) -o $(GOBUILD_OUT_FILE) $(GOBUILD_MAIN_FILE)
 
-fmt: gofmt goimports govet golint
+fmt: gofmt goimports golint
 
 gofmt:
 	@$(foreach var,$(GO_DIFF_FILE),\

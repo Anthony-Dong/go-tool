@@ -2,38 +2,146 @@ package logger
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"os"
+	"strings"
+)
+
+type Logger interface {
+	SetLevel(level string)
+	Debugf(format string, v ...interface{})
+	Infof(format string, v ...interface{})
+	Errorf(format string, v ...interface{})
+	Warnf(format string, v ...interface{})
+	Fatalf(format string, v ...interface{})
+}
+
+func NewStdOutLogger(op ...Option) Logger {
+	logger := newDefaultLogger()
+	for _, elem := range op {
+		elem(logger)
+	}
+	if !strings.HasSuffix(logger.prefix, " ") {
+		logger.prefix = logger.prefix + " "
+	}
+	logger.Logger = log.New(logger.out, logger.prefix, logger.flag)
+	return logger
+}
+
+const (
+	TimeAndFileLoggerFormat int = log.Lshortfile | log.LstdFlags
+	TimeLoggerFormat        int = log.LstdFlags
+)
+
+type StdOutLogger struct {
+	level  Level
+	prefix string
+	out    io.Writer
+	*log.Logger
+	caller int
+	flag   int
+}
+
+type Option func(*StdOutLogger)
+
+var (
+	NameOp = func(name string) Option {
+		return func(logger *StdOutLogger) {
+			logger.prefix = name
+		}
+	}
+	FlagOp = func(flag int) Option {
+		return func(logger *StdOutLogger) {
+			logger.flag = flag
+		}
+	}
+	CallerOp = func(caller int) Option {
+		return func(logger *StdOutLogger) {
+			logger.caller = caller
+		}
+	}
+	OutOp = func(out io.Writer) Option {
+		return func(logger *StdOutLogger) {
+			logger.out = out
+		}
+	}
+	LevelOp = func(level Level) Option {
+		return func(logger *StdOutLogger) {
+			logger.level = level
+		}
+	}
+)
+
+func newDefaultLogger() *StdOutLogger {
+	return &StdOutLogger{
+		level:  LevelDebug,
+		caller: 3,
+		flag:   TimeAndFileLoggerFormat,
+		out:    os.Stdout,
+		prefix: "[GO-TOOL]",
+	}
+}
+func (s *StdOutLogger) output(level Level, str string) {
+	if level > s.level {
+		return
+	}
+	formatStr := ""
+	switch level {
+	case LevelFatal:
+		formatStr = "\033[35m[FATAL]\033[0m " + str
+	case LevelError:
+		formatStr = "\033[31m[ERROR]\033[0m " + str
+	case LevelWarning:
+		formatStr = "\033[33m[WARN]\033[0m " + str
+	case LevelInfo:
+		formatStr = "\033[32m[INFO]\033[0m " + str
+	case LevelDebug:
+		formatStr = "\033[36m[DEBUG]\033[0m " + str
+	}
+	_ = s.Output(s.caller, formatStr)
+}
+
+func (s *StdOutLogger) Debugf(format string, v ...interface{}) {
+	s.output(LevelDebug, fmt.Sprintf(format, v...))
+}
+
+func (s *StdOutLogger) Infof(format string, v ...interface{}) {
+	s.output(LevelInfo, fmt.Sprintf(format, v...))
+}
+func (s *StdOutLogger) Warnf(format string, v ...interface{}) {
+	s.output(LevelWarning, fmt.Sprintf(format, v...))
+}
+func (s *StdOutLogger) Errorf(format string, v ...interface{}) {
+	s.output(LevelError, fmt.Sprintf(format, v...))
+}
+func (s *StdOutLogger) Fatalf(format string, v ...interface{}) {
+	s.output(LevelFatal, fmt.Sprintf(format, v...))
+	os.Exit(-1)
+}
+
+func (s *StdOutLogger) SetLevel(level string) {
+	s.level = levelMap[level]
+}
+
+var (
+	levelMap = map[string]Level{
+		"fatal":   LevelFatal,
+		"error":   LevelError,
+		"warning": LevelWarning,
+		"info":    LevelInfo,
+		"debug":   LevelDebug,
+	}
+)
+
+type (
+	Level int
 )
 
 const (
-	generator = "OSS"
+	LevelFatal Level = iota + 1
+	LevelError
+	LevelWarning
+	LevelInfo
+	LevelDebug
 )
-
-// \033[33m[WARN]\033[0m
-// \033[36m[DEBUG]\033[0m
-
-func Echo() {
-	str := fmt.Sprintf("\033[32m[%s]\033[0m", generator)
-	fmt.Print(str)
-}
-
-func InfoF(format string, v ...interface{}) {
-	str := fmt.Sprintf("\033[32m[%s-INFO]\033[0m %s\n", generator, format)
-	fmt.Printf(str, v ...)
-}
-
-func WarnF(format string, v ...interface{}) {
-	str := fmt.Sprintf("\033[33m[%s-WARN]\033[0m %s\n", generator, format)
-	fmt.Printf(str, v ...)
-}
-
-func ErrorF(format string, v ...interface{}) {
-	str := fmt.Sprintf("\033[31m[%s-ERROR]\033[0m %s\n", generator, format)
-	fmt.Printf(str, v ...)
-}
-
-func FatalF(format string, v ...interface{}) {
-	str := fmt.Sprintf("\033[35m[%s-FATAL]\033[0m %s\n", generator, format)
-	fmt.Printf(str, v ...)
-	os.Exit(-1)
-}

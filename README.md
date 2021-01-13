@@ -19,14 +19,14 @@
 - 1、直接`go get`
 
 ```shell
-go get -u -v github.com/anthony-dong/upload-file-cli/cmd
+go get -u -v github.com/anthony-dong/go-tool/cmd
 ```
 
 - 2、或者下载源码，自己编译
 
 ```shell
 # 下载代码到本地
-wget https://github.com/Anthony-Dong/upload-file-cli/archive/master.zip
+wget https://github.com/Anthony-Dong/go-tool/archive/master.zip
 
 # 解压项目
 unzip master.zip
