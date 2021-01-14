@@ -1,8 +1,11 @@
-package command
+package upload
 
 import (
 	"fmt"
 	"time"
+
+	"github.com/anthony-dong/go-tool/command"
+	"github.com/anthony-dong/go-tool/command/log"
 
 	"github.com/anthony-dong/go-tool/third"
 	"github.com/anthony-dong/go-tool/util"
@@ -24,7 +27,7 @@ type uploadCommand struct {
 	FileNameDecode string `json:"file_name_decode"`
 }
 
-func NewUploadCommand() Command {
+func NewUploadCommand() command.Command {
 	return new(uploadCommand)
 }
 
@@ -92,7 +95,7 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 		return util.NilError("config")
 	}
 	prefix, suffix := util.GetFilePrefixAndSuffix(c.File)
-	file := third.OssUploadFile{
+	fileInfo := third.OssUploadFile{
 		LocalFile:  c.File,
 		SaveDir:    time.Now().Format(util.FromatTime_V2),
 		FilePrefix: c.getFileName(prefix),
@@ -102,10 +105,10 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 	if err != nil {
 		return errors.Trace(err)
 	}
-	if err := file.PutFile(bucket, config); err != nil {
+	if err := fileInfo.PutFile(bucket, config); err != nil {
 		return errors.Trace(err)
 	}
-	fileUrl := file.GetOSSUrl(config)
+	fileUrl := fileInfo.GetOSSUrl(config)
 	log.Infof("[upload] end success, url: %s", fileUrl)
 	fmt.Println(fileUrl)
 	return nil

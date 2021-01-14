@@ -13,7 +13,7 @@ import (
 /**
 判断文件是否存在
 */
-func FileExist(filename string) bool {
+func Exist(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil || os.IsExist(err)
 }
@@ -29,7 +29,7 @@ func GetFileDir(path string) string {
 获取文件的绝对路径
 */
 func GetFileAbsPath(path string) (string, error) {
-	if !FileExist(path) {
+	if !Exist(path) {
 		return "", errors.Errorf("the file: %s not exist", path)
 	}
 	return filepath.Abs(path)

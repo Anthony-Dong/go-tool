@@ -1,13 +1,9 @@
 package command
 
 import (
-	"github.com/anthony-dong/go-tool/logger"
+	"github.com/anthony-dong/go-tool/command/log"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
-)
-
-var (
-	log = logger.NewStdOutLogger(logger.NameOp("[GO-TOOL]"))
 )
 
 type Command interface {

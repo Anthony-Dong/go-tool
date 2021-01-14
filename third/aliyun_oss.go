@@ -7,8 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/anthony-dong/go-tool/util"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/juju/errors"
 )
 
@@ -89,12 +90,12 @@ func GetOssConfig(configFile string) (OssConfigs, error) {
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	file, err := os.Open(filePath)
+	_file, err := os.Open(filePath)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	defer file.Close()
-	body, err := ioutil.ReadAll(file)
+	defer _file.Close()
+	body, err := ioutil.ReadAll(_file)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
