@@ -18,7 +18,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestGit(t *testing.T) {
-	err := GitClone("git@gitlab.corp.xxxx7.com:ebike-urban-op/go-script.git", "/Users/fanhaodong/data/test/demo")
+	err := GitClone("git@github.com:Anthony-Dong/go-tool.git", "/Users/fanhaodong/data/test/demo")
 	if err != nil {
 		fmt.Println(errors.ErrorStack(err))
 	}
