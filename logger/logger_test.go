@@ -5,10 +5,12 @@ import (
 )
 
 func TestNewStdOutLogger(t *testing.T) {
-	logger := NewStdOutLogger(LevelOp(LevelDebug))
+	logger := NewStdOutLogger(LevelOp(LevelFatal))
 	logger.Infof("Infof")
 	logger.Debugf("Debugf")
 	logger.Errorf("Errorf")
 	logger.Warnf("Warnf")
-	logger.Fatalf("Fatalf")
+	t.Log(logger.IsDebugEnabled())
+	t.Log(logger.IsInfoEnabled())
+	//logger.Fatalf("Fatalf")
 }

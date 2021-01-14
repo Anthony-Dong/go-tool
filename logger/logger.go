@@ -10,6 +10,11 @@ import (
 
 type Logger interface {
 	SetLevel(level string)
+	IsDebugEnabled() bool
+	IsInfoEnabled() bool
+	IsWarnEnabled() bool
+	IsErrorEnabled() bool
+	IsFatalEnabled() bool
 	Debugf(format string, v ...interface{})
 	Infof(format string, v ...interface{})
 	Errorf(format string, v ...interface{})
@@ -100,6 +105,25 @@ func (s *StdOutLogger) output(level Level, str string) {
 		formatStr = "\033[36m[DEBUG]\033[0m " + str
 	}
 	_ = s.Output(s.caller, formatStr)
+}
+
+func (s *StdOutLogger) IsDebugEnabled() bool {
+	return !(LevelDebug > s.level)
+}
+
+func (s *StdOutLogger) IsInfoEnabled() bool {
+	return !(LevelInfo > s.level)
+}
+
+func (s *StdOutLogger) IsWarnEnabled() bool {
+	return !(LevelWarning > s.level)
+}
+
+func (s *StdOutLogger) IsErrorEnabled() bool {
+	return !(LevelError > s.level)
+}
+func (s *StdOutLogger) IsFatalEnabled() bool {
+	return !(LevelFatal > s.level)
 }
 
 func (s *StdOutLogger) Debugf(format string, v ...interface{}) {

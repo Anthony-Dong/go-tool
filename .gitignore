@@ -3,6 +3,6 @@
 /config.json
 /app
 /bin
-aliyun-oss-upload-config.json
+upload-config.json
 /coverage.txt
 *.log

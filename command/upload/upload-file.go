@@ -108,8 +108,11 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 		return errors.Trace(err)
 	}
 	fileUrl := fileInfo.GetOSSUrl(config)
-	log.Infof("[upload] end success, url: %s", fileUrl)
-	fmt.Println(fileUrl)
+	if log.IsInfoEnabled() {
+		log.Infof("[upload] end success, url: %s", fileUrl)
+	} else {
+		fmt.Println(fileUrl)
+	}
 	return nil
 }
 

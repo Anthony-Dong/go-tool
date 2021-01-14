@@ -7,10 +7,15 @@ var (
 )
 
 var (
-	Infof    = log.Infof
-	Debugf   = log.Debugf
-	Errorf   = log.Errorf
-	Warnf    = log.Warnf
-	Fatalf   = log.Fatalf
-	SetLevel = log.SetLevel
+	IsDebugEnabled = log.IsDebugEnabled
+	IsInfoEnabled  = log.IsInfoEnabled
+	IsWarnEnabled  = log.IsWarnEnabled
+	IsErrorEnabled = log.IsErrorEnabled
+	IsFatalEnabled = log.IsFatalEnabled
+	Infof          = log.Infof
+	Debugf         = log.Debugf
+	Errorf         = log.Errorf
+	Warnf          = log.Warnf
+	Fatalf         = log.Fatalf
+	SetLevel       = log.SetLevel
 )
