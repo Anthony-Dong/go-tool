@@ -21,8 +21,8 @@ var (
 )
 
 type uploadCommand struct {
-	OssConfigFile  string `json:"oss_config_file"`
-	OssConfigType  string `json:"oss_config_type"`
+	OssConfigFile  string `json:"config_file"`
+	OssConfigType  string `json:"config_type"`
 	File           string `json:"file"`
 	FileNameDecode string `json:"file_name_decode"`
 }
@@ -51,7 +51,7 @@ func (c *uploadCommand) InitConfig(context *cli.Context) (_ []byte, err error) {
 func (c *uploadCommand) Flag() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
-			Name:        "oss_config_file",
+			Name:        "config_file",
 			Aliases:     []string{"c"},
 			Usage:       "the upload config file",
 			Destination: &c.OssConfigFile,
@@ -59,7 +59,7 @@ func (c *uploadCommand) Flag() []cli.Flag {
 			Value:       "upload-config.json",
 		},
 		&cli.StringFlag{
-			Name:        "oss_config_type",
+			Name:        "config_type",
 			Aliases:     []string{"t"},
 			Usage:       "the upload config type, default is default",
 			Destination: &c.OssConfigType,
