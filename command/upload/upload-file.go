@@ -31,17 +31,16 @@ func NewUploadCommand() command.Command {
 	return new(uploadCommand)
 }
 
-func (c *uploadCommand) InitConfig(context *cli.Context) ([]byte, error) {
-	configFilePath, err := util.GetFilePath(c.OssConfigFile)
+func (c *uploadCommand) InitConfig(context *cli.Context) (_ []byte, err error) {
+	c.OssConfigFile, err = util.GetFilePath(c.OssConfigFile)
+	if err != nil {
+		log.Errorf("need create file upload-config.json in , content:\n%s", util.ToJsonString(third.OssConfigs{"default": third.OssConfig{}}))
+		return nil, errors.Trace(err)
+	}
+	c.File, err = util.GetFilePath(c.File)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	c.OssConfigFile = configFilePath
-	file, err := util.GetFilePath(c.File)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	c.File = file
 	_, isExist := decodeType[c.FileNameDecode]
 	if !isExist {
 		return nil, errors.Errorf("decode method not found: %s", c.FileNameDecode)
@@ -54,15 +53,15 @@ func (c *uploadCommand) Flag() []cli.Flag {
 		&cli.StringFlag{
 			Name:        "oss_config_file",
 			Aliases:     []string{"c"},
-			Usage:       "the aliyun oss config file",
+			Usage:       "the upload config file",
 			Destination: &c.OssConfigFile,
 			Required:    false,
-			Value:       "aliyun-oss-upload-config.json",
+			Value:       "upload-config.json",
 		},
 		&cli.StringFlag{
 			Name:        "oss_config_type",
 			Aliases:     []string{"t"},
-			Usage:       "the aliyun oss config type, default is default",
+			Usage:       "the upload config type, default is default",
 			Destination: &c.OssConfigType,
 			Required:    false,
 			Value:       "default",

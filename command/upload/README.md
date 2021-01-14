@@ -22,22 +22,6 @@
 go get -u -v github.com/anthony-dong/go-tool
 ```
 
-- 2、或者下载源码，自己编译
-
-```shell
-# 下载代码到本地
-wget https://github.com/Anthony-Dong/go-tool/archive/master.zip
-
-# 解压项目
-unzip master.zip
-
-# 进入项目目录
-cd master
-
-# 编译
-make
-```
-
 - 3、使用时注意
 
   > `upload`脚本需要和`aliyun-oss-upload-config.json` 配合使用

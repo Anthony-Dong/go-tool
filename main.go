@@ -41,6 +41,6 @@ func main() {
 	sort.Sort(cli.CommandsByName(app.Commands))
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatalf("run cli find err, err: %s", errors.ErrorStack(err))
+		log.Fatalf("run cli find err:\n%s", errors.ErrorStack(err))
 	}
 }

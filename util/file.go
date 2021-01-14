@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -69,7 +68,7 @@ func GetFilePath(fileName string) (string, error) {
 	}
 	path1 := filepath.Clean(filepath.Join(curPath(), fileName))
 	if !exist(path1) {
-		return "", fmt.Errorf("file: %s not fond", path1)
+		return "", errors.Errorf("file: %s not fond", path1)
 	}
 	return path1, nil
 }
