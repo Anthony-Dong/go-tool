@@ -7,9 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/anthony-dong/go-tool/util"
-
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/anthony-dong/go-tool/util"
 	"github.com/juju/errors"
 )
 

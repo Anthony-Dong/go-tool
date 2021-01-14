@@ -1,12 +1,10 @@
 package util
 
 import (
+	"github.com/google/uuid"
 	"strings"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 func GenerateUUID() string {
-	u1 := uuid.NewV4()
-	return strings.ReplaceAll(u1.String(), "-", "")
+	return strings.ReplaceAll(uuid.New().String(), "-", "")
 }
