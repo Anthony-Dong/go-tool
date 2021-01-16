@@ -103,6 +103,8 @@ OPTIONS:
 
 只需要设置如下： 记得`go-tool`写成绝对路径，最后验证一下即可
 
-![image-20210114195430734](https://tyut.oss-accelerate.aliyuncs.com/image/2021/1-14/ec536b08aa054336aaec3a898f203c12.png)
+我配置的命令是 `/Users/fanhaodong/go/bin/go-tool  --log-level fatal upload -f  `
+
+![image-20210116173613955](https://tyut.oss-accelerate.aliyuncs.com/image/2021/1-16/e60e7865de434e37a78856ad91a00c8a.png)
 
 
