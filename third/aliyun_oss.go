@@ -3,12 +3,12 @@ package third
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/anthony-dong/go-tool/util"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/juju/errors"
 )
 
@@ -38,12 +38,12 @@ type OssUploadFile struct {
 	FileSuffix string `json:"file_type"`  // 文件类型名称
 }
 
-// image/2019-08-29/38564c69-85ba-4415-93d8-cb05e783c4b6.jpg
+// image/2019-08-29/38564c69-85ba-4415-93d8-xxxxx.jpg
 func (f *OssUploadFile) GetPutPath(config *OssConfig) string {
 	return filepath.Join(config.PathPrefix, f.SaveDir, fmt.Sprintf("%s%s", f.FilePrefix, f.FileSuffix))
 }
 
-// https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/d21baa6d76a14aa8b70db1c033891990.png
+// https://xxxx.oss-accelerate.xxxx.com/image/2020/9-14/xxxxxx.png
 func (f *OssUploadFile) GetOSSUrl(config *OssConfig) string {
 	path := f.GetPutPath(config)
 	return fmt.Sprintf("https://%s/%s", config.UrlEndpoint, path)
@@ -84,44 +84,12 @@ func (f *OssUploadFile) PutFile(bucket *oss.Bucket, ossConfig *OssConfig) error 
 /**
 获取配置文件
 */
-func GetOssConfig(configFile string) (OssConfigs, error) {
-	filePath, err := util.GetFilePath(configFile)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	_file, err := os.Open(filePath)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
-	defer _file.Close()
-	body, err := ioutil.ReadAll(_file)
-	if err != nil {
-		return nil, errors.Trace(err)
-	}
+func GetOssConfig(body []byte) (OssConfigs, error) {
 	var (
 		multiOssConfig = map[string]OssConfig{}
-		ossConfig      = &OssConfig{}
-		isSingle       = false
 	)
-	// 原来是单个配置文件
-	{
-		err = json.Unmarshal(body, ossConfig)
-		if err != nil {
-			return nil, err
-		}
-		if ossConfig.AccessKeyId != "" {
-			isSingle = true
-		}
-	}
-	//现在需要支持多个
-	{
-		err = json.Unmarshal(body, &multiOssConfig)
-		if !isSingle && err != nil {
-			return nil, err
-		}
-	}
-	if isSingle {
-		multiOssConfig["default"] = *ossConfig
+	if err := json.Unmarshal(body, &multiOssConfig); err != nil {
+		return nil, errors.Annotatef(err, "you should set config in you config file:\n", util.ToJsonString(OssConfigs{"default": OssConfig{}}))
 	}
 	return multiOssConfig, nil
 }

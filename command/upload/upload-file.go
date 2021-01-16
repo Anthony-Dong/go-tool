@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/anthony-dong/go-tool/command"
+	"github.com/anthony-dong/go-tool/command/api"
 	"github.com/anthony-dong/go-tool/command/log"
-
 	"github.com/anthony-dong/go-tool/third"
 	"github.com/anthony-dong/go-tool/util"
 	"github.com/juju/errors"
@@ -18,28 +18,28 @@ var (
 		"uuid":   {},
 		"base64": {},
 	}
+	decodeTypeName = func() string {
+		list, _ := util.GetMapKeysToString(decodeType)
+		return util.ToCliMultiDescString(list)
+	}
 )
 
 type uploadCommand struct {
-	OssConfigFile  string `json:"config_file"`
-	OssConfigType  string `json:"config_type"`
+	api.CommonConfig
+	OssConfigType  string `json:"type"`
 	File           string `json:"file"`
-	FileNameDecode string `json:"file_name_decode"`
+	FileNameDecode string `json:"decode"`
 }
 
 func NewUploadCommand() command.Command {
 	return new(uploadCommand)
 }
 
-func (c *uploadCommand) InitConfig(context *cli.Context) (_ []byte, err error) {
-	c.OssConfigFile, err = util.GetFilePath(c.OssConfigFile)
+func (c *uploadCommand) InitConfig(context *cli.Context, config api.CommonConfig) (_ []byte, err error) {
+	c.CommonConfig = config
+	c.File, err = util.Abs(c.File)
 	if err != nil {
-		log.Errorf("need create file upload-config.json in , content:\n%s", util.ToJsonString(third.OssConfigs{"default": third.OssConfig{}}))
-		return nil, errors.Trace(err)
-	}
-	c.File, err = util.GetFilePath(c.File)
-	if err != nil {
-		return nil, errors.Trace(err)
+		return nil, errors.Annotate(err, "获取文件绝对路径失败")
 	}
 	_, isExist := decodeType[c.FileNameDecode]
 	if !isExist {
@@ -51,17 +51,9 @@ func (c *uploadCommand) InitConfig(context *cli.Context) (_ []byte, err error) {
 func (c *uploadCommand) Flag() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
-			Name:        "config_file",
-			Aliases:     []string{"c"},
-			Usage:       "the upload config file",
-			Destination: &c.OssConfigFile,
-			Required:    false,
-			Value:       "upload-config.json",
-		},
-		&cli.StringFlag{
-			Name:        "config_type",
+			Name:        "type",
 			Aliases:     []string{"t"},
-			Usage:       "the upload config type, default is default",
+			Usage:       fmt.Sprintf("Set the upload config type ()"),
 			Destination: &c.OssConfigType,
 			Required:    false,
 			Value:       "default",
@@ -69,14 +61,14 @@ func (c *uploadCommand) Flag() []cli.Flag {
 		&cli.StringFlag{
 			Name:        "file",
 			Aliases:     []string{"f"},
-			Usage:       "the upload file local path",
+			Usage:       "Set the local path of upload file",
 			Destination: &c.File,
 			Required:    true,
 		},
 		&cli.StringFlag{
-			Name:        "file_name_decode",
+			Name:        "decode",
 			Aliases:     []string{"d"},
-			Usage:       "the upload file name decode",
+			Usage:       fmt.Sprintf("Set the upload file name decode method (%s)", decodeTypeName()),
 			Destination: &c.FileNameDecode,
 			Required:    false,
 			Value:       "uuid",
@@ -85,7 +77,11 @@ func (c *uploadCommand) Flag() []cli.Flag {
 }
 
 func (c *uploadCommand) Run(context *cli.Context) error {
-	configs, err := third.GetOssConfig(c.OssConfigFile)
+	jsonConfig, err := c.ReadConfig("upload")
+	if err != nil {
+		return errors.Trace(err)
+	}
+	configs, err := third.GetOssConfig(jsonConfig)
 	if err != nil {
 		return errors.Trace(err)
 	}

@@ -66,7 +66,6 @@ clean:
 
 get:
 	go get -u -v $(import)
-	go mod tidy
 	go mod download
 
 test: clean

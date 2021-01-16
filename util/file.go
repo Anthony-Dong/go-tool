@@ -48,27 +48,10 @@ func GetFilePrefixAndSuffix(filename string) (prefix, suffix string) {
 }
 
 /**
-获取文件路径
+获取 home path
 */
-func GetFilePath(fileName string) (string, error) {
-	// 当前执行脚本路径
-	var curPath = func() string {
-		path, _ := exec.LookPath(os.Args[0])
-		path, _ = filepath.Abs(path)
-		return filepath.Dir(path)
-	}
-	// 判断文件是否存在
-	var exist = func(filename string) bool {
-		_, err := os.Stat(filename)
-		return err == nil || os.IsExist(err)
-	}
-	str, _ := filepath.Abs(fileName)
-	if exist(str) {
-		return str, nil
-	}
-	path1 := filepath.Clean(filepath.Join(curPath(), fileName))
-	if !exist(path1) {
-		return "", errors.Errorf("file: %s not fond", path1)
-	}
-	return path1, nil
+func HomePath() string {
+	path, _ := exec.LookPath(os.Args[0])
+	path, _ = filepath.Abs(path)
+	return filepath.Dir(path)
 }

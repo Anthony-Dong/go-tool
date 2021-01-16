@@ -6,6 +6,34 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/anthony-dong/go-tool/util"
+)
+
+type (
+	Level int
+)
+
+var (
+	levelMap = map[string]Level{
+		"fatal": LevelFatal,
+		"error": LevelError,
+		"warn":  LevelWarning,
+		"info":  LevelInfo,
+		"debug": LevelDebug,
+	}
+	LogLevelToString = func() string {
+		list, _ := util.GetMapKeysToString(levelMap)
+		return util.ToCliMultiDescString(list)
+	}
+)
+
+const (
+	LevelFatal Level = iota + 1
+	LevelError
+	LevelWarning
+	LevelInfo
+	LevelDebug
 )
 
 type Logger interface {
@@ -147,25 +175,3 @@ func (s *StdOutLogger) Fatalf(format string, v ...interface{}) {
 func (s *StdOutLogger) SetLevel(level string) {
 	s.level = levelMap[level]
 }
-
-var (
-	levelMap = map[string]Level{
-		"fatal":   LevelFatal,
-		"error":   LevelError,
-		"warning": LevelWarning,
-		"info":    LevelInfo,
-		"debug":   LevelDebug,
-	}
-)
-
-type (
-	Level int
-)
-
-const (
-	LevelFatal Level = iota + 1
-	LevelError
-	LevelWarning
-	LevelInfo
-	LevelDebug
-)

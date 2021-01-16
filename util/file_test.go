@@ -18,11 +18,6 @@ func TestFileExist(t *testing.T) {
 func TestName(b *testing.T) {
 }
 
-func TestGetFilePath(t *testing.T) {
-	fmt.Println(GetFilePath("file.go"))
-	fmt.Println(GetFilePath("go.mod"))
-}
-
 func TestGetFilePrefixAndSuffix(t *testing.T) {
 	fmt.Println(GetFilePrefixAndSuffix("/darta/a.png"))
 }

@@ -4,25 +4,53 @@
 
 ## 快速开始
 
+### 1、下载
+
 ```shell
 go get -u -v github.com/anthony-dong/go-tool
 ```
 
+### 2、使用
+
+可以看到目前只有 `upload`命令，支持全局配置`--config` 和 `--log-level`  ，任何命令都通用，使用方式`go-tool --config /data/config.json upload -f ./a.txt`
+
+```shell
+➜ bin/go-tool 
+NAME:
+   go-tool - A go toll cli application for go
+
+USAGE:
+   go-tool [global options] command [command options] [arguments...]
+
+VERSION:
+   v1.0.0
+
+COMMANDS:
+   upload   文件上传工具
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --config value     Location of client config files (default: "/Users/fanhaodong/project/upload-file-cli/bin/.go-tool.json")
+   --log-level value  Set the logging level (warn|info|debug|fatal|error) (default: "debug")
+   --help, -h         show help (default: false)
+   --version, -v      print the version (default: false)
+```
 
 ## [Go-Upload](./command/upload)
 
 >   使用Aliyun Oss上传文件，目前方便使用，且集成了Typora使用
 
 ```shell
-➜  ~ go-tool upload -f /data/test/f1/a 
-[GO-TOOL] 2021/01/14 16:33:41 api.go:35: [INFO] [upload] command load config:
+➜  upload-file-cli git:(master) ✗ bin/go-tool upload -f ./go.mod
+[GO-TOOL] 2021/01/16 16:52:14 api.go:34: [INFO] [upload] command load config:
 {
-  "file": "/data/test/f1/a",
-  "file_name_decode": "uuid",
-  "oss_config_file": "/Users/fanhaodong/go/bin/aliyun-oss-upload-config.json",
-  "oss_config_type": "default"
+  "config": "/Users/fanhaodong/project/upload-file-cli/bin/.go-tool.json",
+  "decode": "uuid",
+  "file": "/Users/fanhaodong/project/upload-file-cli/go.mod",
+  "log-level": "debug",
+  "type": "default"
 }
-[GO-TOOL] 2021/01/14 16:33:46 upload-file.go:112: [INFO] [upload] end success, url: https://tyut.oss-accelerate.aliyuncs.com/image/2021/1-14/0ee1a9e9647b43a38ce3982d5652xxxx
+[GO-TOOL] 2021/01/16 16:52:15 upload-file.go:105: [INFO] [upload] end success, url: https://tyut.oss-accelerate.aliyuncs.com/image/2021/1-16/13b00b9672aa43e681a1b5df3bfaf2c8.mod
 ```
 ## Go-Wrk
 

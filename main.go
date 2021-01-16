@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/anthony-dong/go-tool/command/api"
+
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/upload"
 	"github.com/anthony-dong/go-tool/logger"
@@ -21,7 +23,7 @@ func main() {
 	//os.Args = []string{os.Args[0], "-v"}
 	//os.Args = []string{os.Args[0], "upload", "-h"}
 	//os.Args = []string{os.Args[0], "upload", "--log", "fatal", "-f", "./go.mod"}
-	//os.Args = []string{os.Args[0], "upload", "-f", "./go.mod", "-d", "base64"}
+	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "upload", "-f", "./go.mod", "-d", "base64"}
 	app := &cli.App{
 		Name:         filepath.Base(os.Args[0]),
 		HelpName:     filepath.Base(os.Args[0]),
@@ -32,7 +34,7 @@ func main() {
 		Writer:       os.Stdout,
 		ErrWriter:    os.Stdout,
 		Version:      "v1.0.0",
-		Flags:        []cli.Flag{},
+		Flags:        append([]cli.Flag{}, api.GlobalFlag...),
 		Commands: []*cli.Command{
 			command.NewCommand("upload", "文件上传工具", upload.NewUploadCommand()),
 		},
