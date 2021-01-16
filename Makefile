@@ -31,7 +31,7 @@ export GOPROXY
 export GOPRIVATE
 export GOFLAGS
 
-GO_FILES := $(shell find . -iname '*.go' | grep -v vendor/ | grep -v _test.go)
+GO_FILES := $(shell find . -name '*.go' | grep -v vendor/ | grep -v _test.go)
 
 # 防止本地文件有重名的问题
 .PHONY : all build fmt gofmt goimports golint clean get test testall
@@ -46,39 +46,27 @@ build: clean fmt
 fmt: gofmt goimports golint
 
 gofmt:
-	@$(foreach var,$(GO_FILES),\
-		echo gofmt -d -w  $(var);\
-		gofmt -d -w  $(var);\
-	)
+	@$(foreach var,$(GO_FILES),echo gofmt -d -w  $(var);gofmt -d -w  $(var);)
 
 goimports:
 	@if [ ! -d $(PROJECT_DIR)/bin ]; then mkdir -p $(PROJECT_DIR)/bin; fi
 	@if [ ! -e $(PROJECT_DIR)/bin/goimports ]; then curl -o $(PROJECT_DIR)/bin/goimports https://anthony-wangpan.oss-accelerate.aliyuncs.com/software/2020/12-29/788bd0e30957478488d4159859d29a0e && chmod 0744 $(PROJECT_DIR)/bin/goimports; fi
-	@$(foreach var,$(GO_FILES),\
-		echo goimports -d -w $(var);\
-		$(PROJECT_DIR)/bin/goimports -d -w $(var);\
-	)
+	@$(foreach var,$(GO_FILES),echo goimports -d -w $(var);$(PROJECT_DIR)/bin/goimports -d -w $(var);)
 
 govet:
-	@$(foreach var,$(GO_FILES),\
-		echo go vet $(GOMOD_VENDOR) $(var);\
-		go vet $(GOMOD_VENDOR) $(var);\
-	)
+	@$(foreach var,$(GO_FILES),echo go vet $(GOMOD_VENDOR) $(var);go vet $(GOMOD_VENDOR) $(var);)
 
 golint:
 	@if [ ! -d $(PROJECT_DIR)/bin ]; then mkdir -p $(PROJECT_DIR)/bin; fi
 	@if [ ! -e $(PROJECT_DIR)/bin/golint ]; then curl -o $(PROJECT_DIR)/bin/golint https://anthony-wangpan.oss-accelerate.aliyuncs.com/software/2020/12-30/6fda119141b84c77b0924e9d140704d0 && chmod 0744 $(PROJECT_DIR)/bin/golint; fi
-	@$(foreach var,$(GO_FILES),\
-		echo golint $(var);\
-		$(PROJECT_DIR)/bin/golint $(var);\
-	)
+	@$(foreach var,$(GO_FILES),echo golint $(var);$(PROJECT_DIR)/bin/golint $(var);)
 
 clean:
 	$(RM) -r $(GOBUILD_OUT_FILE) coverage.txt
 
 get:
-	@go get -u -v $(import) &&\
-	go mod tidy &&\
+	go get -u -v $(import)
+	go mod tidy
 	go mod download
 
 test: clean

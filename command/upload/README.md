@@ -4,8 +4,7 @@
 
 - [1、特点](#1特点)
 - [2、快速开始](#2快速开始)
-- [3、如何使用](#3如何使用)
-- [4、配合Typora](#4配合Typora)
+- [3、配合Typora](#4配合Typora)
 
 ## 1、特点
 
@@ -16,34 +15,55 @@
 
 ## 2、快速开始
 
-- 1、直接`go get`
+### 1、下载
 
 ```shell
 go get -u -v github.com/anthony-dong/go-tool
 ```
 
-- 3、使用时注意
-
-  > `upload`脚本需要和`aliyun-oss-upload-config.json` 配合使用
+### 2、使用帮助
 
 ```shlle
-➜  bin ls | grep upload
-aliyun-oss-upload-config.json
-go-tool
+➜ go-tool upload -h
+NAME:
+   upload - 文件上传工具
+
+USAGE:
+   upload [command options] [arguments...]
+
+OPTIONS:
+   --oss_config_file value, -c value   the aliyun oss config file (default: "aliyun-oss-upload-config.json")
+   --oss_config_type value, -t value   the aliyun oss config type, default is default (default: "default")
+   --file value, -f value              the upload file local path
+   --file_name_decode value, -d value  the upload file name decode (default: "uuid")
+   --log value                         the log level of print logger (default: "debug")
+   --help, -h                          show help (default: false)
 ```
 
-`aliyun-oss-upload-config.json`内容
+### 3、简单实用
 
-1、单配置文件，不需要输入`-t`
-
-```json
+```shell
+➜  f2 go-tool upload -f ./a.txt
+[GO-TOOL] 2021/01/14 19:48:51 api.go:35: [INFO] [upload] command load config:
 {
-  "access_key_id": "<access_key_id>",
-  "access_key_secret": "<access_key_secret>",
-  "endpoint": "oss-accelerate.aliyuncs.com", // 下面图片介绍
-  "url_endpoint": "tyut.oss-accelerate.aliyuncs.com",// 下面图片介绍
-  "bucket": "tyut", // bucket
-  "path_prefix": "image" // 存放的路径，不能在跟路径，必须设置一个
+  "config_file": "/Users/fanhaodong/go/bin/upload-config.json",
+  "config_type": "default",
+  "file": "/data/test/f2/a.txt",
+  "file_name_decode": "uuid"
+}
+[GO-TOOL] 2021/01/14 19:48:51 upload-file.go:112: [INFO] [upload] end success, url: https://tyut.oss-accelerate.aliyuncs.com/image/2021/1-14/bd04fa5467fa4f8f88d93fe20558e537.txt
+```
+
+### 4、简单配置文件
+
+```shell
+{
+    "access_key_id": "LTAxxxkPV7oBxxxxxxxx",
+    "access_key_secret": "ihxxx2Hkixxxxxxx8cBQNKP5N",
+    "endpoint": "oss-xxxx.aliyuncs.com",
+    "url_endpoint": "xxxx.oss-accelerate.aliyuncs.com",
+    "bucket": "xxxx",
+    "path_prefix": "image"
 }
 ```
 
@@ -51,7 +71,7 @@ go-tool
 
 ![image-20200914135934215](https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/42cdf58e904e4dbeac06028639db9d40.png)
 
-2、多配置文件
+### 5、多配置文件
 
 ```json
 {
@@ -76,37 +96,23 @@ go-tool
 
 如果参数不输入 `-t`，则默认走 `default`标签！，所以一般推荐都设置一个default标签
 
-## 3、如何使用
-
-- 1、将执行文件导出到环境变量里
-- 2、配置`aliyun-oss-upload-config.json` 文件
-- 3、直接在目录执行 upload命令，参数是上传的文件路径。生成的文件名称是 `前缀/当前年/当前年-月/uuid.文件格式 `
-
 ```shell
-➜  /data upload ./Main.java
-https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/uuid.java
-```
-
-- 4、命令行提示：
-
-```shell
-➜  bin upload -h
-version:1.0.0
-Usage: upload ./Main.java -config=aliyun-oss-upload-config.json
-
-  -config string
-    	配置文件位置 (default "aliyun-oss-upload-config.json")
-  -h	this help
-  -t string
-    	-t=default (default "default")
+# 文件名称编码 base64, 文件上传配置类别 software
+➜ go-tool upload -d base64 -t software -f ./a.txt
+[GO-TOOL] 2021/01/14 19:58:52 api.go:35: [INFO] [upload] command load config:
+{
+  "config_file": "/Users/fanhaodong/go/bin/upload-config.json",
+  "config_type": "software",
+  "file": "/data/test/f2/a.txt",
+  "file_name_decode": "base64"
+}
+[GO-TOOL] 2021/01/14 19:58:54 upload-file.go:112: [INFO] [upload] end success, url: https://anthony-wangpan.oss-accelerate.aliyuncs.com/software/2021/1-14/a.txt
 ```
 
 ## 4、配合Typora
 
-- 1、只需要修改配置即可，十分方便
+只需要设置如下： 记得`go-tool`写成绝对路径，最后验证一下即可
 
-<img src="https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/e9842bc0463d4900977f4bfe3b43799d.png" alt="image-20200914142037902" style="zoom:50%;" />
+![image-20210114195430734](https://tyut.oss-accelerate.aliyuncs.com/image/2021/1-14/ec536b08aa054336aaec3a898f203c12.png)
 
-- 2、如果没有自动上传，手动点击一下即可
 
-<img src="https://tyut.oss-accelerate.aliyuncs.com/image/2020/9-14/02a89c4813f3433c8543fb4e5e1db657.png" alt="image-20200914142207048" style="zoom:50%;" />
