@@ -15,8 +15,6 @@ func TestFileExist(t *testing.T) {
 	fmt.Println(path.Clean("/data///open.name"))
 }
 
-func TestName(b *testing.T) {
-}
 
 func TestGetFilePrefixAndSuffix(t *testing.T) {
 	fmt.Println(GetFilePrefixAndSuffix("/darta/a.png"))

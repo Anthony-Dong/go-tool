@@ -87,7 +87,7 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 	}
 	config := configs.GetConfig(c.OssConfigType)
 	if config == nil {
-		return util.NilError("config")
+		return errors.New("the config is nil")
 	}
 	prefix, suffix := util.GetFilePrefixAndSuffix(c.File)
 	fileInfo := third.OssUploadFile{
