@@ -36,6 +36,23 @@ GLOBAL OPTIONS:
    --version, -v      print the version (default: false)
 ```
 
+## 如何贡献代码
+1、所有的命令都需要实现这个接口，接口需要实现在以下位置`command/{cli-command}`，可以参考：[upload的实现](./command/upload/cli.go)
+```go
+type Command interface {
+	Run(context *cli.Context) error
+	Flag() []cli.Flag
+	InitConfig(context *cli.Context, config api.CommonConfig) ([]byte, error)
+}
+```
+2、注册命令,可以在[main.go](./main.go) 中实现
+```go
+Commands: []*cli.Command{
+   command.NewCommand({cli-command}, {cli-desc}, {cli-pck}.NewCommand()),
+},
+```
+
+
 ## [Go-Upload](./command/upload)
 
 >   使用Aliyun Oss上传文件，目前方便使用，且集成了Typora使用
