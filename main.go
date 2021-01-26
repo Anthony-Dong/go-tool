@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/anthony-dong/go-tool/command/markdown"
+
 	"github.com/anthony-dong/go-tool/command/api"
 
 	"github.com/anthony-dong/go-tool/command"
@@ -24,6 +26,8 @@ func main() {
 	//os.Args = []string{os.Args[0], "upload", "-h"}
 	//os.Args = []string{os.Args[0], "upload", "--log", "fatal", "-f", "./go.mod"}
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "upload", "-f", "./go.mod", "-d", "base64"}
+	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "markdown", "-h"}
+	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "markdown", "-d","/Users/fanhaodong/note/note","-t","/Users/fanhaodong/note/note/README-template.md"}
 	app := &cli.App{
 		Name:         filepath.Base(os.Args[0]),
 		HelpName:     filepath.Base(os.Args[0]),
@@ -37,6 +41,7 @@ func main() {
 		Flags:        append([]cli.Flag{}, api.GlobalFlag...),
 		Commands: []*cli.Command{
 			command.NewCommand("upload", "文件上传工具", upload.NewUploadCommand()),
+			command.NewCommand("markdown", "生成markdown项目的README文件", markdown.NewMarkdownCommand()),
 		},
 	}
 	sort.Sort(cli.FlagsByName(app.Flags))

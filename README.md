@@ -74,3 +74,25 @@ Commands: []*cli.Command{
 >  压测Http接口工具
 
 ## Go-Orm
+
+> ​	未加入，期待
+
+## [Go-Markdown](./command/markdown)
+
+> ​	自动生成博客的README文件
+
+```shell
+➜  go-tool --config .config/go-tool.json  markdown --dir /Users/fanhaodong/note/note --template .config/README-template.md
+[GO-TOOL] 2021/01/26 16:29:42 api.go:34: [INFO] [markdown] command load config:
+{
+  "config": "/Users/fanhaodong/note/note/.config/go-tool.json",
+  "dir": "/Users/fanhaodong/note/note",
+  "log-level": "debug",
+  "template": "/Users/fanhaodong/note/note/.config/README-template.md"
+}
+[GO-TOOL] 2021/01/26 16:29:42 markdown.go:72: [INFO] Get ReadmeFileInfo success, UrlPath: Not show, Total: 452
+[GO-TOOL] 2021/01/26 16:29:42 markdown.go:80: [INFO] Create /Users/fanhaodong/note/note/README.md file success !!
+[GO-TOOL] 2021/01/26 16:29:42 markdown.go:86: [INFO] New parser success, template file: /Users/fanhaodong/note/note/.config/README-template.md
+[GO-TOOL] 2021/01/26 16:29:42 markdown.go:91: [INFO] Write README file success !!
+```
+

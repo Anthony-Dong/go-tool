@@ -6,3 +6,4 @@
 upload-config.json
 /coverage.txt
 *.log
+/.DS_Store
