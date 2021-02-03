@@ -108,6 +108,7 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 		log.Infof("[upload] end success, url: %s", fileUrl)
 	} else {
 		fmt.Println(fileUrl)
+		util.ExitError()
 	}
 	return nil
 }
