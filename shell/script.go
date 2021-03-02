@@ -47,7 +47,7 @@ func Copy(src, dest string) (err error) {
 }
 
 func Mv(src, dest string) (err error) {
-	gitCmd := fmt.Sprintf("mv %s %s", src, dest)
+	gitCmd := fmt.Sprintf("mv '%s' '%s'", src, dest)
 	return Cmd(gitCmd)
 }
 
