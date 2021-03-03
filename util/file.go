@@ -1,6 +1,9 @@
 package util
 
 import (
+	"bufio"
+	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -54,4 +57,48 @@ func HomePath() string {
 	path, _ := exec.LookPath(os.Args[0])
 	path, _ = filepath.Abs(path)
 	return filepath.Dir(path)
+}
+
+func ReadFile(fileName string) ([]byte, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	return ioutil.ReadAll(file)
+}
+
+func WriteFileBody(filename string, body []byte) error {
+	if body == nil {
+		return nil
+	}
+	file, err := os.OpenFile(filename, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	if _, err := file.Write(body); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ReadFileLine(file io.Reader, foo func(line string) error) error {
+	reader := bufio.NewReader(file)
+	for {
+		lines, isEOF, err := reader.ReadLine()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return errors.Trace(err)
+		}
+		if isEOF {
+			break
+		}
+		if err := foo(string(lines)); err != nil {
+			return err
+		}
+	}
+	return nil
 }

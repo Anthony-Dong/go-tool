@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func ToString(value interface{}) string {
@@ -56,4 +57,15 @@ func ToString(value interface{}) string {
 		}
 		return fmt.Sprintf("%+v", value)
 	}
+}
+
+func NewString(len int, elem byte) string {
+	if len == 0 {
+		return ""
+	}
+	builder := strings.Builder{}
+	for x := 0; x < len; x++ {
+		builder.WriteByte(elem)
+	}
+	return builder.String()
 }

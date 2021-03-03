@@ -96,3 +96,79 @@ func ReplaceFileContent(old []string, new string, fileName string) error {
 	}
 	return nil
 }
+
+func WriteFile(writer io.Writer, body []string) error {
+	if writer == nil || body == nil {
+		return errors.New("params is nil")
+	}
+	var line = []byte{'\n'}
+	for _, elem := range body {
+		if _, err := writer.Write(String2Slice(elem)); err != nil {
+			return err
+		}
+		if _, err := writer.Write(line); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// V2
+func ReplaceFileContentV2(keyword []string, file io.Reader) ([]string, bool, error) {
+	if file == nil {
+		return nil, false, errors.New("file is nil")
+	}
+	if keyword == nil || len(keyword) == 0 {
+		return nil, false, nil
+	}
+	count := 0
+	keywordMap := newKeywordMap(keyword)
+	reader := bufio.NewReader(file)
+	fileLines := make([]string, 0)
+	hasContent := false
+	for {
+		lines, isEOF, err := reader.ReadLine()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, false, errors.Trace(err)
+		}
+		if isEOF {
+			break
+		}
+		line := string(lines)
+		if line == "" && !hasContent {
+			continue
+		}
+		hasContent = true
+		for _, elem := range keyword {
+			if strings.Contains(line, elem) {
+				line = strings.ReplaceAll(line, elem, keywordMap[elem])
+				count++
+			}
+		}
+		fileLines = append(fileLines, line)
+	}
+	return fileLines, count > 0, nil
+}
+
+func newKeywordMap(keyword []string) map[string]string {
+	if keyword == nil || len(keyword) == 0 {
+		return nil
+	}
+	builder := strings.Builder{}
+	result := make(map[string]string, len(keyword))
+	for _, elem := range keyword {
+		strLen := len(elem)
+		if strLen == 0 {
+			continue
+		}
+		builder.Reset()
+		for x := strLen - 1; x >= 0; x-- {
+			builder.WriteByte(elem[x])
+		}
+		result[elem] = builder.String()
+	}
+	return result
+}

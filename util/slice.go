@@ -44,3 +44,15 @@ func ToCliMultiDescString(slice []string) string {
 	}
 	return result.String()
 }
+
+func SliceLineToString(lines []string) string {
+	if lines == nil || len(lines) == 0 {
+		return ""
+	}
+	builder := strings.Builder{}
+	for _, elem := range lines {
+		builder.WriteString(elem)
+		builder.WriteByte('\n')
+	}
+	return builder.String()
+}

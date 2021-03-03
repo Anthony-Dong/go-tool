@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/anthony-dong/go-tool/command/hexo"
+
 	"github.com/anthony-dong/go-tool/command/markdown"
 
 	"github.com/anthony-dong/go-tool/command/api"
@@ -28,6 +30,8 @@ func main() {
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "upload", "-f", "./go.mod", "-d", "base64"}
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "markdown", "-h"}
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "markdown", "-d","/Users/fanhaodong/note/note","-t","/Users/fanhaodong/note/note/README-template.md"}
+	//os.Args = []string{os.Args[0], "hexo", "-h"}
+	//os.Args = []string{os.Args[0], "hexo", "-d", "/Users/fanhaodong/go/code/go-tool/test/test", "-t", "/Users/fanhaodong/go/code/go-tool/test/post", "-k", "baidu", "-k", "alibaba"}
 	app := &cli.App{
 		Name:         filepath.Base(os.Args[0]),
 		HelpName:     filepath.Base(os.Args[0]),
@@ -42,6 +46,7 @@ func main() {
 		Commands: []*cli.Command{
 			command.NewCommand("upload", "文件上传工具", upload.NewUploadCommand()),
 			command.NewCommand("markdown", "生成markdown项目的README文件", markdown.NewMarkdownCommand()),
+			command.NewCommand("hexo", "生成hexo项目的Markdown文件", hexo.NewCommand()),
 		},
 	}
 	sort.Sort(cli.FlagsByName(app.Flags))

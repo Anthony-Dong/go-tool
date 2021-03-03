@@ -1,4 +1,5 @@
 /vendor
+# 1111
 /.idea
 /config.json
 /app
@@ -7,3 +8,4 @@ upload-config.json
 /coverage.txt
 *.log
 /.DS_Store
+/test
