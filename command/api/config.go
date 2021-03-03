@@ -6,11 +6,12 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/anthony-dong/go-tool/commons/gfile"
+	logger2 "github.com/anthony-dong/go-tool/commons/logger"
+
 	"github.com/juju/errors"
 	"github.com/tidwall/gjson"
 
-	"github.com/anthony-dong/go-tool/logger"
-	"github.com/anthony-dong/go-tool/util"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,7 +24,7 @@ var (
 	GlobalFlag = []cli.Flag{
 		&cli.StringFlag{
 			Name:     logLevelFlag,
-			Usage:    fmt.Sprintf("Set the logging level (%s)", logger.LogLevelToString()),
+			Usage:    fmt.Sprintf("Set the logging level (%s)", logger2.LogLevelToString()),
 			Required: false,
 			Value:    "debug",
 		},
@@ -31,7 +32,7 @@ var (
 			Name:     configFlag,
 			Usage:    "Location of client config files",
 			Required: false,
-			Value:    filepath.Join(util.HomePath(), ".go-tool.json"),
+			Value:    filepath.Join(gfile.HomePath(), ".go-tool.json"),
 		},
 	}
 )

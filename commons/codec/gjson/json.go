@@ -1,9 +1,9 @@
-package util
+package gjson
 
 import (
 	"encoding/json"
 
-	"github.com/anthony-dong/go-tool/util/prettyjson"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson/prettyjson"
 )
 
 func ToJsonString(v interface{}) []byte {

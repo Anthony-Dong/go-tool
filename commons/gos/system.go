@@ -1,4 +1,4 @@
-package util
+package gos
 
 import "os"
 

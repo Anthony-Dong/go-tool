@@ -1,8 +1,10 @@
-package util
+package collections
 
 import (
 	"reflect"
 	"strings"
+
+	"github.com/anthony-dong/go-tool/commons/gstring"
 
 	"github.com/juju/errors"
 )
@@ -22,7 +24,7 @@ func GetMapKeysToString(obj interface{}) (list []string, err error) {
 	values := value.MapKeys()
 	result := make([]string, 0, len(values))
 	for _, elem := range values {
-		result = append(result, ToString(elem.Interface()))
+		result = append(result, gstring.ToString(elem.Interface()))
 	}
 	return result, nil
 }

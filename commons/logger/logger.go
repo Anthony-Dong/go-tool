@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/anthony-dong/go-tool/util"
+	"github.com/anthony-dong/go-tool/commons/collections"
 )
 
 type (
@@ -23,8 +23,8 @@ var (
 		"debug": LevelDebug,
 	}
 	LogLevelToString = func() string {
-		list, _ := util.GetMapKeysToString(levelMap)
-		return util.ToCliMultiDescString(list)
+		list, _ := collections.GetMapKeysToString(levelMap)
+		return collections.ToCliMultiDescString(list)
 	}
 )
 

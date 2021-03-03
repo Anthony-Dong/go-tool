@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/anthony-dong/go-tool/logger"
+	logger2 "github.com/anthony-dong/go-tool/commons/logger"
 
 	"github.com/juju/errors"
 )
@@ -74,5 +74,5 @@ func Cmd(cmd string) error {
 }
 
 var (
-	_shellLogger = logger.NewStdOutLogger(logger.NameOp("[Shell]"), logger.FlagOp(logger.TimeLoggerFormat))
+	_shellLogger = logger2.NewStdOutLogger(logger2.NameOp("[Shell]"), logger2.FlagOp(logger2.TimeLoggerFormat))
 )

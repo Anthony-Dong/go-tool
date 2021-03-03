@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/anthony-dong/go-tool/util"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/juju/errors"
@@ -89,7 +89,7 @@ func GetOssConfig(body []byte) (OssConfigs, error) {
 		multiOssConfig = map[string]OssConfig{}
 	)
 	if err := json.Unmarshal(body, &multiOssConfig); err != nil {
-		return nil, errors.Annotatef(err, "you should set config in you config file:%s\n", util.ToJsonString(OssConfigs{"default": OssConfig{}}))
+		return nil, errors.Annotatef(err, "you should set config in you config file:%s\n", gjson.ToJsonString(OssConfigs{"default": OssConfig{}}))
 	}
 	return multiOssConfig, nil
 }

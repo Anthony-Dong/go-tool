@@ -1,12 +1,14 @@
-package util
+package digest
 
 import (
 	"crypto/md5"
 	"fmt"
+
+	"github.com/anthony-dong/go-tool/commons/gstring"
 )
 
 func Md5String(data string) string {
-	return Md5(String2Slice(data))
+	return Md5(gstring.String2Slice(data))
 }
 
 func Md5(data []byte) string {

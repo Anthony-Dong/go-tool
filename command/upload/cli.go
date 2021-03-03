@@ -4,11 +4,18 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/anthony-dong/go-tool/commons/codec/digest"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"github.com/anthony-dong/go-tool/commons/collections"
+	"github.com/anthony-dong/go-tool/commons/gfile"
+	"github.com/anthony-dong/go-tool/commons/gos"
+	"github.com/anthony-dong/go-tool/commons/gtime"
+	"github.com/anthony-dong/go-tool/commons/uuid"
+
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
 	"github.com/anthony-dong/go-tool/command/log"
 	"github.com/anthony-dong/go-tool/third"
-	"github.com/anthony-dong/go-tool/util"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
@@ -19,8 +26,8 @@ var (
 		"base64": {},
 	}
 	decodeTypeName = func() string {
-		list, _ := util.GetMapKeysToString(decodeType)
-		return util.ToCliMultiDescString(list)
+		list, _ := collections.GetMapKeysToString(decodeType)
+		return collections.ToCliMultiDescString(list)
 	}
 )
 
@@ -37,7 +44,7 @@ func NewUploadCommand() command.Command {
 
 func (c *uploadCommand) InitConfig(context *cli.Context, config api.CommonConfig) (_ []byte, err error) {
 	c.CommonConfig = config
-	c.File, err = util.Abs(c.File)
+	c.File, err = gfile.Abs(c.File)
 	if err != nil {
 		return nil, errors.Annotate(err, "获取文件绝对路径失败")
 	}
@@ -45,7 +52,7 @@ func (c *uploadCommand) InitConfig(context *cli.Context, config api.CommonConfig
 	if !isExist {
 		return nil, errors.Errorf("decode method not found: %s", c.FileNameDecode)
 	}
-	return util.ToJsonString(c), nil
+	return gjson.ToJsonString(c), nil
 }
 
 func (c *uploadCommand) Flag() []cli.Flag {
@@ -89,10 +96,10 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 	if config == nil {
 		return errors.New("the config is nil")
 	}
-	prefix, suffix := util.GetFilePrefixAndSuffix(c.File)
+	prefix, suffix := gfile.GetFilePrefixAndSuffix(c.File)
 	fileInfo := third.OssUploadFile{
 		LocalFile:  c.File,
-		SaveDir:    time.Now().Format(util.FromatTime_V2),
+		SaveDir:    time.Now().Format(gtime.FromatTime_V2),
 		FilePrefix: c.getFileName(prefix),
 		FileSuffix: suffix,
 	}
@@ -108,7 +115,7 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 		log.Infof("[upload] end success, url: %s", fileUrl)
 	} else {
 		fmt.Println(fileUrl)
-		util.ExitError()
+		gos.ExitError()
 	}
 	return nil
 }
@@ -116,9 +123,9 @@ func (c *uploadCommand) Run(context *cli.Context) error {
 func (c *uploadCommand) getFileName(fileName string) string {
 	switch c.FileNameDecode {
 	case "uuid":
-		return util.GenerateUUID()
+		return uuid.GenerateUUID()
 	case "base64":
-		return util.Base64Encode(fileName)
+		return digest.Base64Encode(fileName)
 	}
 	return ""
 }

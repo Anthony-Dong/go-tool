@@ -1,4 +1,4 @@
-package util
+package gfile
 
 import (
 	"bufio"
@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/anthony-dong/go-tool/commons/gstring"
 
 	"github.com/juju/errors"
 )
@@ -103,7 +105,7 @@ func WriteFile(writer io.Writer, body []string) error {
 	}
 	var line = []byte{'\n'}
 	for _, elem := range body {
-		if _, err := writer.Write(String2Slice(elem)); err != nil {
+		if _, err := writer.Write(gstring.String2Slice(elem)); err != nil {
 			return err
 		}
 		if _, err := writer.Write(line); err != nil {

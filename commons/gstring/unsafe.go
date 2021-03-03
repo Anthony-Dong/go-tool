@@ -1,4 +1,4 @@
-package util
+package gstring
 
 import (
 	"unsafe"

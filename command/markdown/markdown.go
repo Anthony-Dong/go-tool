@@ -8,10 +8,13 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/anthony-dong/go-tool/commons/codec/digest"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"github.com/anthony-dong/go-tool/commons/gfile"
+
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
 	"github.com/anthony-dong/go-tool/command/log"
-	"github.com/anthony-dong/go-tool/util"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
@@ -37,12 +40,12 @@ func NewMarkdownCommand() command.Command {
 
 func (m *markdownCommand) InitConfig(context *cli.Context, config api.CommonConfig) ([]byte, error) {
 	m.CommonConfig = config
-	file, err := util.GetFileAbsPath(m.Dir)
+	file, err := gfile.GetFileAbsPath(m.Dir)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 	m.Dir = file
-	return util.ToJsonString(m), nil
+	return gjson.ToJsonString(m), nil
 }
 
 func (m *markdownCommand) Flag() []cli.Flag {
@@ -113,7 +116,7 @@ func (m *markdownCommand) getParser() (*template.Template, error) {
 func (m *markdownCommand) getReadmeFileInfo() (*readmeFileInfo, error) {
 	builder := strings.Builder{}
 	// 获取全部文件
-	files, err := util.GetAllFiles(m.Dir, func(fileName string) bool {
+	files, err := gfile.GetAllFiles(m.Dir, func(fileName string) bool {
 		return strings.HasSuffix(fileName, ".md") || strings.HasSuffix(fileName, ".markdown")
 	})
 	if err != nil {
@@ -122,7 +125,7 @@ func (m *markdownCommand) getReadmeFileInfo() (*readmeFileInfo, error) {
 	// 转成 markdown的url写法
 	url := func(file string) string {
 		file = strings.TrimPrefix(file, m.Dir)
-		return fmt.Sprintf("- [%s](.%s)\n", file, util.Base64Encode(file))
+		return fmt.Sprintf("- [%s](.%s)\n", file, digest.Base64Encode(file))
 	}
 	// 遍历写
 	for _, elem := range files {

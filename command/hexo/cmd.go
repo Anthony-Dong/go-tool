@@ -3,9 +3,11 @@ package hexo
 import (
 	"fmt"
 
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"github.com/anthony-dong/go-tool/commons/gfile"
+
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
-	"github.com/anthony-dong/go-tool/util"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
@@ -25,16 +27,16 @@ func NewCommand() command.Command {
 func (m *hexoCommand) InitConfig(context *cli.Context, config api.CommonConfig) ([]byte, error) {
 	m.CommonConfig = config
 	var err error
-	m.Dir, err = util.GetFileAbsPath(m.Dir)
+	m.Dir, err = gfile.GetFileAbsPath(m.Dir)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
-	m.TargetDir, err = util.GetFileAbsPath(m.TargetDir)
+	m.TargetDir, err = gfile.GetFileAbsPath(m.TargetDir)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 	m.ShowKeyword = m.Keyword.Value()
-	return util.ToJsonString(m), nil
+	return gjson.ToJsonString(m), nil
 }
 
 func (m *hexoCommand) Flag() []cli.Flag {

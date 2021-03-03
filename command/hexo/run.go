@@ -10,9 +10,14 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/anthony-dong/go-tool/commons/codec/digest"
+	"github.com/anthony-dong/go-tool/commons/collections"
+	"github.com/anthony-dong/go-tool/commons/gfile"
+	"github.com/anthony-dong/go-tool/commons/gstring"
+	"github.com/anthony-dong/go-tool/commons/gtime"
+	"github.com/anthony-dong/go-tool/commons/shell"
+
 	"github.com/anthony-dong/go-tool/command/log"
-	"github.com/anthony-dong/go-tool/shell"
-	"github.com/anthony-dong/go-tool/util"
 	"github.com/juju/errors"
 	"gopkg.in/yaml.v2"
 )
@@ -45,11 +50,11 @@ type CheckFileCanHexoResult struct {
 func (c *CheckFileCanHexoResult) WriteFile() error {
 	checkFileNeedReWrite := func(data []byte) (bool, error) {
 		// 当前文件
-		oldData, err := util.ReadFile(c.FileName)
+		oldData, err := gfile.ReadFile(c.FileName)
 		if err != nil {
 			return false, err
 		}
-		return !(util.Md5(oldData) == util.Md5(data)), nil
+		return !(digest.Md5(oldData) == digest.Md5(data)), nil
 	}
 
 	// 组装文件
@@ -64,8 +69,8 @@ func (c *CheckFileCanHexoResult) WriteFile() error {
 	buffer.Write([]byte(delimiter))
 	buffer.WriteByte('\n')
 	buffer.WriteByte('\n')
-	content := util.SliceLineToString(c.Content)
-	buffer.Write(util.String2Slice(content))
+	content := collections.SliceLineToString(c.Content)
+	buffer.Write(gstring.String2Slice(content))
 
 	data := buffer.Bytes()
 	// 检测文件是否需要重写，通过MD5校验
@@ -75,7 +80,7 @@ func (c *CheckFileCanHexoResult) WriteFile() error {
 	}
 	if needWrite {
 		log.Infof("[Hexo] 发现MD5比较不一致需要重新写入到源文件, 文件: %s", c.FileName)
-		if err := util.WriteFileBody(c.FileName, data); err != nil {
+		if err := gfile.WriteFileBody(c.FileName, data); err != nil {
 			return err
 		}
 	}
@@ -85,11 +90,11 @@ func (c *CheckFileCanHexoResult) WriteFile() error {
 }
 
 func Run(ctx context.Context, dir string, targetDir string, firmCode []string) error {
-	dir, err := util.Abs(filepath.Clean(dir))
+	dir, err := gfile.Abs(filepath.Clean(dir))
 	if err != nil {
 		return errors.Trace(err)
 	}
-	targetDir, err = util.Abs(filepath.Clean(targetDir))
+	targetDir, err = gfile.Abs(filepath.Clean(targetDir))
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -106,8 +111,8 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 		return errors.Trace(err)
 	}
 	log.Debugf("[Hexo] 获取全部的Target-Markdown文件成功, 目录: %s, 总数: %d", targetDir, len(targetPage))
-	targetPageSet := util.NewSet(targetPage)
-	newTargetPage := util.NewSetInitSize(targetPageSet.Size())
+	targetPageSet := collections.NewSet(targetPage)
+	newTargetPage := collections.NewSetInitSize(targetPageSet.Size())
 
 	wg := sync.WaitGroup{}
 	for _, file := range allPage {
@@ -154,7 +159,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 			targetFile := filepath.Join(targetDir, result.Config.TargetFile)
 
 			writeTargetFile := func() {
-				if err := util.WriteFileBody(targetFile, result.ContentData); err != nil {
+				if err := gfile.WriteFileBody(targetFile, result.ContentData); err != nil {
 					log.Errorf("[Hexo] 发现需要写入到Hexo的post目录文件发现了异常, 文件: %s, 异常: %v", targetFile, err)
 					return
 				}
@@ -166,12 +171,12 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 				writeTargetFile()
 			} else {
 				// 比较MD5是否相同
-				readBody, err := util.ReadFile(targetFile)
+				readBody, err := gfile.ReadFile(targetFile)
 				if err != nil {
 					log.Errorf("[Hexo] 发现读取Hexo的post目录文件发现了异常, 文件: %s, 异常: %v", targetFile, err)
 					return
 				}
-				if util.Md5(result.ContentData) != util.Md5(readBody) {
+				if digest.Md5(result.ContentData) != digest.Md5(readBody) {
 					log.Infof("[Hexo] 发现读取Hexo的post目录文件和原文件MD5值不一样, 需要重写, 文件: %s,  源文件: %s", targetFile, fileName)
 					writeTargetFile()
 				}
@@ -220,7 +225,7 @@ func CheckFileHasFirmCode(fileName string, content []string, firmCode []string) 
 		for _, elem := range firmCode {
 			if strings.Contains(line, elem) {
 				log.Warnf("[Hexo] 发现公司代码, 文件: %s, 公司代码: %s, 原文: %s", fileName, elem, line)
-				newElem := util.NewString(len(elem), 'x')
+				newElem := gstring.NewString(len(elem), 'x')
 				line = strings.ReplaceAll(line, elem, newElem)
 			}
 		}
@@ -326,9 +331,9 @@ func CheckFileCanHexo(fileName string, filePath string) (*CheckFileCanHexoResult
 		return nil, nil
 	}
 
-	config := util.SliceLineToString(yamlConfig)
+	config := collections.SliceLineToString(yamlConfig)
 	fileConfig := new(Config)
-	err = yaml.Unmarshal(util.String2Slice(config), fileConfig)
+	err = yaml.Unmarshal(gstring.String2Slice(config), fileConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -347,7 +352,7 @@ func CheckFileCanHexo(fileName string, filePath string) (*CheckFileCanHexoResult
 
 	// 文件修改时间
 	if fileConfig.Date == "" {
-		fileConfig.Date = fileInfo.ModTime().Format(util.FromatTime_V1)
+		fileConfig.Date = fileInfo.ModTime().Format(gtime.FromatTime_V1)
 	}
 
 	return &CheckFileCanHexoResult{
@@ -381,7 +386,7 @@ func ReadFile(file io.Reader, foo func(line string) error) error {
 }
 
 func GetAllPage(dir string) ([]string, error) {
-	return util.GetAllFiles(dir, func(fileName string) bool {
+	return gfile.GetAllFiles(dir, func(fileName string) bool {
 		suffix := filepath.Ext(fileName)
 		base := filepath.Base(fileName)
 		if !(suffix == ".md" || suffix == ".markdown") {
@@ -399,7 +404,7 @@ func GetAllPage(dir string) ([]string, error) {
 }
 
 func GetAllMarkDownPage(dir string) ([]string, error) {
-	return util.GetAllFiles(dir, func(fileName string) bool {
+	return gfile.GetAllFiles(dir, func(fileName string) bool {
 		suffix := filepath.Ext(fileName)
 		if !(suffix == ".md" || suffix == ".markdown") {
 			return false
