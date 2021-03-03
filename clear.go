@@ -17,16 +17,25 @@ func main() {
 }
 
 func run() {
-	firmCode := []string{
-		Slice2String([]byte{0x73, 0x6f, 0x6e, 0x67, 0x67, 0x75, 0x6f}),
-		Slice2String([]byte{0x74, 0x74, 0x79, 0x63}),
-		Slice2String([]byte{0x74, 0x74, 0x79, 0x6f, 0x6e, 0x67, 0x63, 0x68, 0x65}),
-		Slice2String([]byte{0x70, 0x62, 0x73}),
-	}
-	Infof("开始检测代码: %+v", firmCode)
-	allFile := make([]string, 0)
-	var err error
-	if allFile, err = GetAllFiles("./", func(fileName string) bool {
+	var (
+		// 检测目录
+		dir = "./"
+		// 公司敏感词汇，利用字节数组过滤
+		firmCode = []string{
+			string([]byte{0x73, 0x6f, 0x6e, 0x67, 0x67, 0x75, 0x6f}),
+			string([]byte{0x74, 0x74, 0x79, 0x63}),
+			string([]byte{0x74, 0x74, 0x79, 0x6f, 0x6e, 0x67, 0x63, 0x68, 0x65}),
+			string([]byte{0x70, 0x62, 0x73}),
+		}
+		// 所有待检测的文件
+		allFile = make([]string, 0)
+		err     error
+		// 绝对路径
+		absPath = AbsPath(dir)
+	)
+	Infof("开始检测代码: %+v, 位置: %s", ToCliMultiDescString(firmCode), absPath)
+
+	if allFile, err = GetAllFiles(dir, func(fileName string) bool {
 		info, err := os.Stat(fileName)
 		if err != nil {
 			panic(err)
@@ -84,7 +93,7 @@ func run() {
 
 	wg.Wait()
 
-	Infof("检测代码完成: %+v", firmCode)
+	Infof("完成检测代码: %+v, 位置: %s", ToCliMultiDescString(firmCode), absPath)
 }
 
 var (
@@ -152,4 +161,30 @@ func ReadFileLine(file io.Reader, foo func(line string) error) error {
 		}
 	}
 	return nil
+}
+
+// 转换成 cli命令的 多个条件描述文本，例如 k1,k2 => "k1"|"k2"
+func ToCliMultiDescString(slice []string) string {
+	if slice == nil || len(slice) == 0 {
+		return ""
+	}
+	lastIndex := len(slice) - 1
+	result := strings.Builder{}
+	for index, elem := range slice {
+		result.WriteByte('"')
+		result.WriteString(elem)
+		result.WriteByte('"')
+		if index != lastIndex {
+			result.WriteByte('|')
+		}
+	}
+	return result.String()
+}
+
+func AbsPath(filePath string) string {
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		panic(err)
+	}
+	return absPath
 }
