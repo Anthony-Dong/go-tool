@@ -31,19 +31,19 @@ func clear() {
 			string([]byte{0x74, 0x74, 0x79, 0x6f, 0x6e, 0x67, 0x63, 0x68, 0x65}),
 			string([]byte{0x70, 0x62, 0x73}),
 		}
-		//Git的规则
-		gitIgnore = CompileIgnoreLines(
+		ignorePattern = []string{
 			"/.git",
 			"/bin",
 			"/.idea",
 			"/test",
-		)
+		}
+		//Git的规则
+		gitIgnore = CompileIgnoreLines(ignorePattern...)
 		// 存储所有待检测的文件
 		allFile = make([]string, 0)
 	)
 
 	Infof("开始检测代码: %+v, 位置: %s", ToCliMultiDescString(firmCode), AbsPath(dir))
-
 	// 获取全部文件
 	allFile = GetAllFile(dir, gitIgnore)
 
@@ -61,6 +61,7 @@ func clear() {
 	// 结束
 	wg.Wait()
 
+	Infof("Git忽略的 Patter: %s", ToCliMultiDescString(ignorePattern))
 	Infof("完成检测代码: %+v, 位置: %s, 一共检测 %d 个文件 !", ToCliMultiDescString(firmCode), AbsPath(dir), len(allFile))
 }
 
