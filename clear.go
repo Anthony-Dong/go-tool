@@ -36,13 +36,6 @@ func run() {
 	Infof("开始检测代码: %+v, 位置: %s", ToCliMultiDescString(firmCode), absPath)
 
 	if allFile, err = GetAllFiles(dir, func(fileName string) bool {
-		info, err := os.Stat(fileName)
-		if err != nil {
-			panic(err)
-		}
-		if info.IsDir() {
-			return false
-		}
 		dir := filepath.Dir(fileName)
 		base := filepath.Base(fileName)
 		if strings.HasPrefix(dir, ".idea") {
