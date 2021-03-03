@@ -34,24 +34,28 @@ USAGE:
 OPTIONS:
    --dir value, -d value       The markdown project dir
    --template value, -t value  The markdown template file path, go template struct: &{UrlPath: Total:0}
+   --ignore value, -i value    The markdown template file path of gitignore pattern
    --help, -h                  show help (default: false)
 ```
 
 ### 3、简单操作
 
 ```shell
-➜  go-tool --config .config/go-tool.json  markdown --dir /Users/fanhaodong/note/note --template .config/README-template.md
-[GO-TOOL] 2021/01/26 16:29:42 api.go:34: [INFO] [markdown] command load config:
+➜  go-tool --config /Users/fanhaodong/note/note/.config/go-tool.json  markdown --dir /Users/fanhaodong/note/note --template /Users/fanhaodong/note/note/.config/README-template.md
+[GO-TOOL] 2021/03/03 15:54:40 markdown.go:66: [INFO] Found .gitignore
+[GO-TOOL] 2021/03/03 15:54:40 api.go:34: [INFO] [markdown] command load config:
 {
   "config": "/Users/fanhaodong/note/note/.config/go-tool.json",
   "dir": "/Users/fanhaodong/note/note",
+  "gir_ignore_file": "/Users/fanhaodong/note/note/.gitignore",
+  "git_ignore_pattern": [],
   "log-level": "debug",
   "template": "/Users/fanhaodong/note/note/.config/README-template.md"
 }
-[GO-TOOL] 2021/01/26 16:29:42 markdown.go:72: [INFO] Get ReadmeFileInfo success, UrlPath: Not show, Total: 452
-[GO-TOOL] 2021/01/26 16:29:42 markdown.go:80: [INFO] Create /Users/fanhaodong/note/note/README.md file success !!
-[GO-TOOL] 2021/01/26 16:29:42 markdown.go:86: [INFO] New parser success, template file: /Users/fanhaodong/note/note/.config/README-template.md
-[GO-TOOL] 2021/01/26 16:29:42 markdown.go:91: [INFO] Write README file success !!
+[GO-TOOL] 2021/03/03 15:54:46 markdown.go:108: [INFO] Get ReadmeFileInfo success, UrlPath: Not show, Total: 871
+[GO-TOOL] 2021/03/03 15:54:46 markdown.go:116: [INFO] Create /Users/fanhaodong/note/note/README.md file success !!
+[GO-TOOL] 2021/03/03 15:54:46 markdown.go:122: [INFO] New parser success, template file: /Users/fanhaodong/note/note/.config/README-template.md
+[GO-TOOL] 2021/03/03 15:54:46 markdown.go:127: [INFO] Write README file success !!
 ```
 
 ### 4、配置文件

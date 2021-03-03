@@ -8,6 +8,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/anthony-dong/go-tool/commons/git"
+
 	"github.com/anthony-dong/go-tool/commons/codec/digest"
 	"github.com/anthony-dong/go-tool/commons/codec/gjson"
 	"github.com/anthony-dong/go-tool/commons/gfile"
@@ -25,8 +27,12 @@ const (
 
 type markdownCommand struct {
 	api.CommonConfig
-	Dir          string `json:"dir"`
-	TemplateFile string `json:"template"`
+	Dir           string          `json:"dir"`
+	GirIgnoreFile string          `json:"gir_ignore_file"`
+	TemplateFile  string          `json:"template"`
+	GitIgnore     *git.GitIgnore  `json:"-"`
+	Ignore        cli.StringSlice `json:"-"`
+	IgnoreSlice   []string        `json:"git_ignore_pattern"`
 }
 
 type readmeFileInfo struct {
@@ -45,6 +51,26 @@ func (m *markdownCommand) InitConfig(context *cli.Context, config api.CommonConf
 		return nil, errors.Trace(err)
 	}
 	m.Dir = file
+
+	if m.Ignore.Value() != nil {
+		m.IgnoreSlice = m.Ignore.Value()
+	} else {
+		m.IgnoreSlice = []string{}
+	}
+
+	_, err = os.Stat(filepath.Join(m.Dir, git.GitIgnoreFileName))
+	if err != nil {
+		log.Warnf("Not found " + git.GitIgnoreFileName)
+		m.GitIgnore = git.CompileIgnoreLines(m.IgnoreSlice...)
+	} else {
+		log.Infof("Found " + git.GitIgnoreFileName)
+		m.GirIgnoreFile = filepath.Join(m.Dir, git.GitIgnoreFileName)
+		ignore, err := git.CompileIgnoreFileAndLines(m.GirIgnoreFile, m.IgnoreSlice...)
+		if err != nil {
+			return nil, errors.Trace(err)
+		}
+		m.GitIgnore = ignore
+	}
 	return gjson.ToJsonString(m), nil
 }
 
@@ -63,6 +89,13 @@ func (m *markdownCommand) Flag() []cli.Flag {
 			Destination: &m.TemplateFile,
 			Required:    true,
 			Usage:       fmt.Sprintf("The markdown template file path, go template struct: %+v", new(readmeFileInfo)),
+		},
+		&cli.StringSliceFlag{
+			Name:        "ignore",
+			Aliases:     []string{"i"},
+			Destination: &m.Ignore,
+			Required:    false,
+			Usage:       fmt.Sprintf("The markdown template file path of gitignore pattern"),
 		},
 	}
 }
@@ -117,7 +150,14 @@ func (m *markdownCommand) getReadmeFileInfo() (*readmeFileInfo, error) {
 	builder := strings.Builder{}
 	// 获取全部文件
 	files, err := gfile.GetAllFiles(m.Dir, func(fileName string) bool {
-		return strings.HasSuffix(fileName, ".md") || strings.HasSuffix(fileName, ".markdown")
+		relativePath, err := gfile.GetFileRelativePath(fileName, m.Dir)
+		if err != nil {
+			panic(err)
+		}
+		if m.GitIgnore.MatchesPath(relativePath) {
+			return false
+		}
+		return strings.HasSuffix(relativePath, ".md") || strings.HasSuffix(relativePath, ".markdown")
 	})
 	if err != nil {
 		return nil, errors.Trace(err)

@@ -30,7 +30,7 @@ func main() {
 	//os.Args = []string{os.Args[0], "upload", "--log", "fatal", "-f", "./go.mod"}
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "upload", "-f", "./go.mod", "-d", "base64"}
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "markdown", "-h"}
-	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/go/bin/upload-config.json", "markdown", "-d","/Users/fanhaodong/note/note","-t","/Users/fanhaodong/note/note/README-template.md"}
+	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/note/note/.config/go-tool.json", "markdown", "-d", "/Users/fanhaodong/note/note", "-t", "/Users/fanhaodong/note/note/.config/README-template.md", "-i", "/hexo-home"}
 	//os.Args = []string{os.Args[0], "hexo", "-h"}
 	//os.Args = []string{os.Args[0], "hexo", "-d", "/Users/fanhaodong/go/code/go-tool/test/test", "-t", "/Users/fanhaodong/go/code/go-tool/test/post", "-k", "baidu", "-k", "alibaba"}
 	app := &cli.App{
