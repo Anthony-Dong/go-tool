@@ -24,7 +24,7 @@ func clear() {
 	var (
 		// 检测目录
 		dir = "./"
-		// 公司敏感词汇，利用字节数组过滤
+		// 需要过滤的敏感词汇，利用字节数组过滤
 		firmCode = []string{
 			string([]byte{0x73, 0x6f, 0x6e, 0x67, 0x67, 0x75, 0x6f}),
 			string([]byte{0x74, 0x74, 0x79, 0x63}),
