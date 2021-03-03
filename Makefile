@@ -34,7 +34,7 @@ export GOFLAGS
 GO_FILES := $(shell find . -name '*.go' | grep -v vendor/ | grep -v _test.go)
 
 # 防止本地文件有重名的问题
-.PHONY : all build fmt gofmt goimports golint clean get test testall
+.PHONY : all build fmt gofmt goimports golint clean get test testall clear
 
 # make默认启动
 all: build
@@ -43,7 +43,7 @@ all: build
 build: clean fmt
 	$(GOBUILD_ARGS) $(GOMOD_VENDOR) -o $(GOBUILD_OUT_FILE) $(GOBUILD_MAIN_FILE)
 
-fmt: gofmt goimports golint
+fmt: gofmt goimports golint clear
 
 gofmt:
 	@$(foreach var,$(GO_FILES),echo gofmt -d -w  $(var);gofmt -d -w  $(var);)
@@ -75,3 +75,6 @@ test: clean
 testall: clean
 	go test -v -cover -coverprofile=coverage.txt -covermode=atomic ./...
 	go tool cover -html=coverage.txt
+
+clear:
+	go run clear.go
