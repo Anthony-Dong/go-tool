@@ -6,7 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
+
+	"github.com/anthony-dong/go-tool/commons/collections"
 
 	"github.com/anthony-dong/go-tool/commons/git"
 
@@ -101,6 +104,12 @@ func (m *markdownCommand) Flag() []cli.Flag {
 }
 
 func (m *markdownCommand) Run(context *cli.Context) error {
+	parser, err := m.getParser()
+	if err != nil {
+		return errors.Trace(err)
+	}
+	log.Infof("New parser success, template file: %s", m.TemplateFile)
+
 	info, err := m.getReadmeFileInfo()
 	if err != nil {
 		return errors.Trace(err)
@@ -113,13 +122,7 @@ func (m *markdownCommand) Run(context *cli.Context) error {
 		return errors.Trace(err)
 	}
 	defer file.Close()
-	log.Infof("Create %s file success !!", readmeFile)
-
-	parser, err := m.getParser()
-	if err != nil {
-		return errors.Trace(err)
-	}
-	log.Infof("New parser success, template file: %s", m.TemplateFile)
+	log.Infof("Open %s file success !!", readmeFile)
 
 	if err := parser.Execute(file, info); err != nil {
 		return errors.Trace(err)
@@ -148,27 +151,48 @@ func (m *markdownCommand) getParser() (*template.Template, error) {
 
 func (m *markdownCommand) getReadmeFileInfo() (*readmeFileInfo, error) {
 	builder := strings.Builder{}
-	// 获取全部文件
+	// 获取全部文件, 这个效率比较高，串行效率比较低
 	files, err := gfile.GetAllFiles(m.Dir, func(fileName string) bool {
-		relativePath, err := gfile.GetFileRelativePath(fileName, m.Dir)
-		if err != nil {
-			panic(err)
-		}
-		if m.GitIgnore.MatchesPath(relativePath) {
-			return false
-		}
-		return strings.HasSuffix(relativePath, ".md") || strings.HasSuffix(relativePath, ".markdown")
+		return strings.HasSuffix(fileName, ".md") || strings.HasSuffix(fileName, ".markdown")
 	})
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
+	// 使用goroutine map方式
+	var newFiles = make([]string, 0, len(files))
+	// 并发读写切片存在data race问题
+	var newFilesLock sync.Mutex
+	filesMap := collections.SplitStringSlice(files, 100)
+	wg := sync.WaitGroup{}
+	wg.Add(len(filesMap))
+	for _, elem := range filesMap {
+		go func(files []string) {
+			defer wg.Done()
+			for _, fileName := range files {
+				relativePath, err := gfile.GetFileRelativePath(fileName, m.Dir)
+				if err != nil {
+					panic(err)
+				}
+				if m.GitIgnore.MatchesPath(relativePath) {
+					continue
+				}
+				func() {
+					newFilesLock.Lock()
+					defer newFilesLock.Unlock()
+					newFiles = append(newFiles, fileName)
+				}()
+			}
+		}(elem)
+	}
+	wg.Wait()
+
 	// 转成 markdown的url写法
 	url := func(file string) string {
 		file = strings.TrimPrefix(file, m.Dir)
 		return fmt.Sprintf("- [%s](.%s)\n", file, digest.Base64Encode(file))
 	}
 	// 遍历写
-	for _, elem := range files {
+	for _, elem := range newFiles {
 		_, err := builder.WriteString(url(elem))
 		if err != nil {
 			return nil, errors.Trace(err)
@@ -176,6 +200,6 @@ func (m *markdownCommand) getReadmeFileInfo() (*readmeFileInfo, error) {
 	}
 	return &readmeFileInfo{
 		UrlPath: builder.String(),
-		Total:   len(files),
+		Total:   len(newFiles),
 	}, nil
 }

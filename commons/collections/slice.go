@@ -58,3 +58,27 @@ func SliceLineToString(lines []string) string {
 	}
 	return builder.String()
 }
+
+func SplitStringSlice(slice []string, length int) [][]string {
+	if slice == nil || len(slice) == 0 {
+		return [][]string{}
+	}
+	if len(slice) <= length {
+		return [][]string{slice}
+	}
+	cut := 0
+	if len(slice)%length == 0 {
+		cut = len(slice) / length
+	} else {
+		cut = len(slice)/length + 1
+	}
+	result := make([][]string, 0, cut)
+	for x := 0; x < cut; x++ {
+		end := x*length + length
+		if end > len(slice) {
+			end = len(slice)
+		}
+		result = append(result, slice[x*length:end])
+	}
+	return result
+}
