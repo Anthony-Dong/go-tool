@@ -9,17 +9,14 @@ import (
 	"sync"
 	"text/template"
 
-	"github.com/anthony-dong/go-tool/commons/collections"
-
-	"github.com/anthony-dong/go-tool/commons/git"
-
-	"github.com/anthony-dong/go-tool/commons/codec/digest"
-	"github.com/anthony-dong/go-tool/commons/codec/gjson"
-	"github.com/anthony-dong/go-tool/commons/gfile"
-
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
 	"github.com/anthony-dong/go-tool/command/log"
+	"github.com/anthony-dong/go-tool/commons/codec/digest"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"github.com/anthony-dong/go-tool/commons/collections"
+	"github.com/anthony-dong/go-tool/commons/gfile"
+	"github.com/anthony-dong/go-tool/commons/git"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
