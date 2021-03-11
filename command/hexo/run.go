@@ -10,14 +10,12 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/anthony-dong/go-tool/command/log"
 	"github.com/anthony-dong/go-tool/commons/codec/digest"
 	"github.com/anthony-dong/go-tool/commons/collections"
 	"github.com/anthony-dong/go-tool/commons/gfile"
 	"github.com/anthony-dong/go-tool/commons/gstring"
 	"github.com/anthony-dong/go-tool/commons/gtime"
-	"github.com/anthony-dong/go-tool/commons/shell"
-
-	"github.com/anthony-dong/go-tool/command/log"
 	"github.com/juju/errors"
 	"gopkg.in/yaml.v2"
 )
@@ -113,6 +111,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 	log.Debugf("[Hexo] 获取全部的Target-Markdown文件成功, 目录: %s, 总数: %d", targetDir, len(targetPage))
 	targetPageSet := collections.NewSet(targetPage)
 	newTargetPage := collections.NewSetInitSize(targetPageSet.Size())
+	needWriteNewTargetPage := collections.NewSetInit()
 
 	wg := sync.WaitGroup{}
 	for _, file := range allPage {
@@ -163,6 +162,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 					log.Errorf("[Hexo] 发现需要写入到Hexo的post目录文件发现了异常, 文件: %s, 异常: %v", targetFile, err)
 					return
 				}
+				needWriteNewTargetPage.Put(targetFile)
 			}
 
 			// 不存在
@@ -190,7 +190,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 	wg.Wait()
 
 	// delete
-	log.Infof("[Hexo] 操作脚本完成, 一共写入: %d", newTargetPage.Size())
+	log.Infof("[Hexo] 操作脚本完成, 一共写入: %d, 总页数: %d", needWriteNewTargetPage.Size(), newTargetPage.Size())
 
 	slice := targetPageSet.ToSlice()
 	for _, elem := range slice {
@@ -199,7 +199,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 		}
 	}
 
-	log.Infof("[Hexo] 操作脚本完成需要删除文件, 删除: %d", targetPageSet.Size())
+	log.Infof("[Hexo] 操作脚本完成需要删除文件: %d", targetPageSet.Size())
 
 	if targetPageSet.Size() == 0 {
 		return nil
@@ -207,7 +207,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 
 	for _, elem := range targetPageSet.ToSlice() {
 		log.Infof("[Hexo] 删除文件, 文件: %s", elem)
-		if err := shell.Delete(elem); err != nil {
+		if err := os.Remove(elem); err != nil {
 			log.Errorf("[Hexo] 删除文件失败, 文件: %s, 异常: %s", elem, err)
 			return err
 		}
@@ -263,7 +263,7 @@ func CheckFileCanHexoPre(fileName string) bool {
 	return false
 }
 
-func CheckFileCanHexo(fileName string, filePath string) (*CheckFileCanHexoResult, error) {
+func CheckFileCanHexo(fileName string, fileParentPath string) (*CheckFileCanHexoResult, error) {
 	if !CheckFileCanHexoPre(fileName) {
 		return nil, nil
 	}
@@ -337,24 +337,21 @@ func CheckFileCanHexo(fileName string, filePath string) (*CheckFileCanHexoResult
 	if err != nil {
 		return nil, err
 	}
-
 	// title为空
 	if fileConfig.Title == "" {
-		fileConfig.Title = strings.TrimSuffix(fileInfo.Name(), filepath.Ext(fileInfo.Name()))
+		return nil, errors.New("the hexo title can not null")
 	}
-
-	// 源文件
-	fileConfig.OriginFile = strings.TrimPrefix(strings.TrimPrefix(fileName, filePath), string(filepath.Separator))
+	// 源文件(相对路径)
+	fileConfig.OriginFile, err = gfile.GetFileRelativePath(fileName, fileParentPath)
+	if err != nil {
+		return nil, err
+	}
 	// 目标文件
-	if fileConfig.TargetFile == "" {
-		fileConfig.TargetFile = strings.ReplaceAll(fileConfig.Title, " ", "-") + ".md"
-	}
-
+	fileConfig.TargetFile = digest.Md5String(fileConfig.Title) + ".md"
 	// 文件修改时间
 	if fileConfig.Date == "" {
 		fileConfig.Date = fileInfo.ModTime().Format(gtime.FromatTime_V1)
 	}
-
 	return &CheckFileCanHexoResult{
 		CanHexo:     canHexo,
 		HasAbstract: hasAbstract,

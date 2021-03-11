@@ -61,7 +61,7 @@ func Delete(file ...string) (err error) {
 			return errors.New("can not delete * file")
 		}
 	}
-	gitCmd := fmt.Sprintf("rm -r %s", strings.Join(file, " "))
+	gitCmd := fmt.Sprintf("rm -r '%s'", strings.Join(file, " "))
 	return errors.Trace(Cmd(gitCmd))
 }
 

@@ -2,7 +2,7 @@ package digest
 
 import (
 	"crypto/md5"
-	"fmt"
+	"encoding/hex"
 
 	"github.com/anthony-dong/go-tool/commons/gstring"
 )
@@ -12,7 +12,7 @@ func Md5String(data string) string {
 }
 
 func Md5(data []byte) string {
-	has := md5.Sum(data)
-	md5str := fmt.Sprintf("%x", has)
-	return md5str
+	m := md5.New()
+	m.Write(data)
+	return hex.EncodeToString(m.Sum(nil))
 }
