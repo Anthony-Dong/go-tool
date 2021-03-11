@@ -77,4 +77,5 @@ testall: clean
 	go tool cover -html=coverage.txt
 
 clear:
-	go run clear.go
+	go build -v -o clear-tool clear/clear.go
+	./clear-tool

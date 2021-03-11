@@ -8,3 +8,4 @@ upload-config.json
 *.log
 /.DS_Store
 /test
+/clear-tool
