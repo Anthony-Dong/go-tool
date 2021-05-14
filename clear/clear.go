@@ -34,6 +34,7 @@ func clear() {
 		ignorePattern = []string{
 			"/.git",
 			"/bin",
+			"/vendor",
 			"/.idea",
 			"/test",
 		}
