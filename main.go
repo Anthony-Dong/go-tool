@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/anthony-dong/go-tool/command/wrk"
 	"os"
 	"path/filepath"
 	"sort"
@@ -33,6 +34,8 @@ func main() {
 	//os.Args = []string{os.Args[0], "--config", "/Users/fanhaodong/note/note/.config/go-tool.json", "markdown", "-d", "/Users/fanhaodong/note/note", "-t", "/Users/fanhaodong/note/note/.config/README-template.md", "-i", "/hexo-home"}
 	//os.Args = []string{os.Args[0], "hexo", "-h"}
 	//os.Args = []string{os.Args[0], "hexo", "-d", "/Users/fanhaodong/go/code/go-tool/test/test", "-t", "/Users/fanhaodong/go/code/go-tool/test/post", "-k", "baidu", "-k", "alibaba"}
+	//os.Args = []string{os.Args[0], "wrk", "-h"}
+	//os.Args = []string{os.Args[0], "wrk", "-d", "1s", "-t","5","-u", "http://localhost:8888"}
 	app := &cli.App{
 		Name:         filepath.Base(os.Args[0]),
 		HelpName:     filepath.Base(os.Args[0]),
@@ -48,6 +51,7 @@ func main() {
 			command.NewCommand("upload", "文件上传工具", upload.NewUploadCommand()),
 			command.NewCommand("markdown", "生成markdown项目的README文件", markdown.NewMarkdownCommand()),
 			command.NewCommand("hexo", "生成hexo项目的Markdown文件", hexo.NewCommand()),
+			command.NewCommand("wrk", "压测接口工具", wrk.NewCommand()),
 		},
 	}
 	sort.Sort(cli.FlagsByName(app.Flags))

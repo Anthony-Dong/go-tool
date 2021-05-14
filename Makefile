@@ -79,3 +79,9 @@ testall: clean
 clear:
 	go build -v -o clear-tool clear/clear.go
 	./clear-tool
+
+docker:
+	docker run --rm -it --name go-tool -v $(PROJECT_DIR):/root/go/code  fanhaodong/golang:1.13.5 /bin/bash
+
+exec:
+	docker exec -it  go-tool /bin/bash
