@@ -8,8 +8,8 @@ import (
 
 var (
 	defaultConfig = Config{
-		Threads:     runtime.NumCPU() * 2,
-		Connections: 10,
+		Threads:     runtime.NumCPU(),
+		Connections: runtime.NumCPU(),
 		Timeout:     time.Second * 5,
 		Method:      http.MethodGet,
 	}

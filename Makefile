@@ -14,7 +14,7 @@ GOBUILD_OUT_FILE := bin/go-tool
 # 主函数入口
 GOBUILD_MAIN_FILE := main.go
 # go build参数 -gcflags "-N -l" 参数 -N 来禁用优化，使用 -l 来禁用内联
-GOBUILD_ARGS := go build -race -v -ldflags "-s -w"
+GOBUILD_ARGS := go build -v -ldflags "-s -w"
 # go test 相关
 GO_TEST_FUNC_NAME := $(test_func)
 GO_TEST_PKG_NAME := $(test_pkg)

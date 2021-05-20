@@ -11,20 +11,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"github.com/juju/errors"
 
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
+	"github.com/anthony-dong/go-tool/command/log"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
 	"github.com/anthony-dong/go-tool/commons/collections"
 	"github.com/anthony-dong/go-tool/commons/ghttp"
-	"github.com/juju/errors"
-	"github.com/panjf2000/ants/v2"
+	"github.com/anthony-dong/go-tool/commons/gtime"
 	"github.com/urfave/cli/v2"
 )
 
 type Config struct {
-	Duration    time.Duration   `json:"duration"` // 处理时间
-	Url         string          `json:"url"`      // 请求路径
+	Duration    time.Duration `json:"-"` // 处理时间
+	DurationStr string        `json:"duration"`
+
+	Url         string          `json:"url"` // 请求路径
 	HeaderSlice cli.StringSlice `json:"-"`
 	Header      http.Header     `json:"header"` // 请求头
 	Body        string          `json:"body"`   // 请求体
@@ -32,8 +35,10 @@ type Config struct {
 	Threads     int `json:"threads"`     // 最大并发数量
 	Connections int `json:"connections"` // 最大连接数
 
-	Timeout time.Duration `json:"timeout"` // 连接/请求超时时间
-	Method  string        `json:"method"`  // 请求方法
+	Timeout    time.Duration `json:"-"` // 连接/请求超时时间
+	TimeoutStr string        `json:"timeout"`
+
+	Method string `json:"method"` // 请求方法
 }
 
 func NewConfig(time time.Duration, url string, op ...Option) *Config {
@@ -55,6 +60,13 @@ func (c *Config) InitConfig(context *cli.Context, config api.CommonConfig) ([]by
 	}
 	c.Header = headers
 	c.Method = strings.ToUpper(c.Method)
+	c.DurationStr = gtime.TimeToSeconds(c.Duration)
+	c.TimeoutStr = gtime.TimeToSeconds(c.Timeout)
+
+	if c.Connections < c.Threads {
+		log.Errorf("set connections is %v", c.Threads)
+		return nil, errors.Errorf("the connections < threads")
+	}
 	return gjson.ToJsonString(c), nil
 }
 
@@ -70,7 +82,7 @@ func (c *Config) Flag() []cli.Flag {
 		&cli.IntFlag{
 			Name:        "connections",
 			Aliases:     []string{"c"},
-			Usage:       fmt.Sprintf("Connections to keep open"),
+			Usage:       fmt.Sprintf("Connections to keep open, must greater than threads"),
 			Destination: &c.Connections,
 			Required:    false,
 			Value:       defaultConfig.Connections,
@@ -151,35 +163,25 @@ func run(config *Config) error {
 	defaultTransport = newTransport(config) // 创建连接池
 	defer func() {
 	}()
-	// 线程池
-	gpool, err := ants.NewPool(int(config.Threads), func(opts *ants.Options) {
-		opts.MaxBlockingTasks = 1 << 20 // 最大 1024*1024个任务
-		opts.PreAlloc = true
-	}) // 创建线程池
-	if err != nil {
-		return errors.Trace(err)
-	}
-	defer gpool.Release() // 最后释放
-
 	// 创建timer
 	ctx, cancelFunc := context.WithTimeout(context.Background(), config.Duration) // 创建超时时间
 	defer cancelFunc()
 
-	// 调度
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				sendError(gpool.Submit(func() {
+	// 直接死循环调度threads个go
+	for x := 0; x < config.Threads; x++ {
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				default:
 					if err := request(config); err != nil {
 						sendError(err)
 					}
-				}))
+				}
 			}
-		}
-	}()
+		}()
+	}
 
 	// wait
 	select {
@@ -211,10 +213,8 @@ func newTransport(config *Config) http.RoundTripper {
 
 func request(config *Config) (err error) {
 	// 创建客户端
-	client := resetClient()
+	client := resetClient(config)
 	defer httpClientPool.Put(client)
-	client.Timeout = config.Timeout
-	client.Transport = defaultTransport
 
 	// 获取请求体
 	buffer, err := newRequestReader(config.Body)
@@ -254,11 +254,12 @@ func request(config *Config) (err error) {
 	return nil
 }
 
-func resetClient() (client *http.Client) {
+func resetClient(config *Config) (client *http.Client) {
 	client = httpClientPool.Get().(*http.Client)
 	client.CheckRedirect = nil
 	client.Jar = nil
-	client.Transport = nil
+	client.Transport = defaultTransport
+	client.Timeout = config.Timeout
 	return client
 }
 
