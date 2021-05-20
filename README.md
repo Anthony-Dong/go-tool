@@ -73,6 +73,63 @@ Commands: []*cli.Command{
 
 >  压测Http接口工具
 
+```shell
+➜  go-tool git:(master)  bin/go-tool wrk -h
+NAME:
+   wrk - 压测接口工具
+
+USAGE:
+   wrk [command options] [arguments...]
+
+OPTIONS:
+   --duration value, -d value     Set the request duration for wrk ("1ms"|"1s"|"1m"|"1h") (default: 0s)
+   --connections value, -c value  Connections to keep open, must greater than threads (default: 12)
+   --threads value, -t value      Number of threads to use (default: 12)
+   --method value, -m value       Set the http request method method (default: "GET")
+   --url value, -u value          Set the request url
+   --body value, -b value         Set the request body
+   --header value, -H value       Set the request header
+   --timeout value                Socket request timeout (default: 5s)
+   --help, -h                     show help (default: false)
+```
+
+例如请求某个接口：
+
+```shell
+➜  go-tool git:(master) ✗  bin/go-tool wrk -t 10 -c 10 -d 10s -b hello -H content-type:application/json -u http://localhost:9999/test
+[GO-TOOL] 2021/05/20 14:49:40 api.go:34: [INFO] [wrk] command load config:
+{
+  "body": "hello",
+  "connections": 10,
+  "duration": "10s",
+  "header": {
+    "Content-Type": [
+      "application/json"
+    ]
+  },
+  "method": "GET",
+  "threads": 10,
+  "timeout": "5s",
+  "url": "http://localhost:9999/test"
+}
+==========请求时长分布图==============
+1ms  257038  99.74%
+5ms  257681  99.99%
+10ms  257704  100.00%
+50ms  257709  100.00%
+100ms  257709  100.00%
+500ms  257709  100.00%
+1000ms  257709  100.00%
+5000ms  257709  100.00%
+==========请求次数分布图==============
+请求总次数: 257709
+请求次数/s: 25770
+==========请求体吞吐量==============
+请求吞吐量(kb): 0kb
+请求每秒吞吐量(kb/s): 0kb
+程序结束，一共花费 10.001s
+```
+
 ## Go-Orm
 
 > ​	未加入，期待
