@@ -3,10 +3,8 @@ package third
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"os"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/juju/errors"
@@ -40,7 +38,7 @@ type OssUploadFile struct {
 
 // image/2019-08-29/38564c69-85ba-4415-93d8-xxxxx.jpg
 func (f *OssUploadFile) GetPutPath(config *OssConfig) string {
-	return filepath.Join(config.PathPrefix, f.SaveDir, fmt.Sprintf("%s%s", f.FilePrefix, f.FileSuffix))
+	return fmt.Sprintf("%s/%s/%s", config.PathPrefix, f.SaveDir, fmt.Sprintf("%s%s", f.FilePrefix, f.FileSuffix))
 }
 
 // https://xxxx.oss-accelerate.xxxx.com/image/2020/9-14/xxxxxx.png
