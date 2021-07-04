@@ -17,7 +17,7 @@ var (
 )
 
 /**
-获取当前用户执行的shell
+获取当前用户执行的shell.
 */
 func init() {
 	shell = os.Getenv("SHELL")
@@ -51,7 +51,7 @@ func Mv(src, dest string) (err error) {
 	return Cmd(gitCmd)
 }
 
-// delete file
+// delete file.
 func Delete(file ...string) (err error) {
 	if file == nil || len(file) == 0 {
 		return

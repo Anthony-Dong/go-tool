@@ -52,7 +52,7 @@ func (s *set) ToSlice() []string {
 	result := make([]string, 0, len(s.body))
 	s.RLock()
 	defer s.RUnlock()
-	for k, _ := range s.body {
+	for k := range s.body {
 		result = append(result, k)
 	}
 	return result

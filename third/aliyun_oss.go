@@ -3,8 +3,9 @@ package third
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/anthony-dong/go-tool/commons/codec/gjson"
 	"os"
+
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/juju/errors"
@@ -36,7 +37,7 @@ type OssUploadFile struct {
 	FileSuffix string `json:"file_type"`  // 文件类型名称
 }
 
-// image/2019-08-29/38564c69-85ba-4415-93d8-xxxxx.jpg
+// image/2019-08-29/38564c69-85ba-4415-93d8-xxxxx.jpg.
 func (f *OssUploadFile) GetPutPath(config *OssConfig) string {
 	return fmt.Sprintf("%s/%s/%s", config.PathPrefix, f.SaveDir, fmt.Sprintf("%s%s", f.FilePrefix, f.FileSuffix))
 }
@@ -48,7 +49,7 @@ func (f *OssUploadFile) GetOSSUrl(config *OssConfig) string {
 }
 
 /**
-new Bucket
+new Bucket.
 */
 func NewBucket(ossConfig *OssConfig) (*oss.Bucket, error) {
 	client, err := oss.New(ossConfig.Endpoint, ossConfig.AccessKeyId, ossConfig.AccessKeySecret, func(client *oss.Client) {
@@ -66,7 +67,7 @@ func NewBucket(ossConfig *OssConfig) (*oss.Bucket, error) {
 }
 
 /**
-上传文件
+上传文件.
 */
 func (f *OssUploadFile) PutFile(bucket *oss.Bucket, ossConfig *OssConfig) error {
 	file, err := os.Open(f.LocalFile)
@@ -80,7 +81,7 @@ func (f *OssUploadFile) PutFile(bucket *oss.Bucket, ossConfig *OssConfig) error 
 }
 
 /**
-获取配置文件
+获取配置文件.
 */
 func GetOssConfig(body []byte) (OssConfigs, error) {
 	var (

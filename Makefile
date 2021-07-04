@@ -7,81 +7,51 @@
 # Usage    :make		   		                        #
 # #######################################################
 
-# 项目路径
+# dir
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-# 二进制文件输出位置
-GOBUILD_OUT_FILE := bin/go-tool
-# 主函数入口
-GOBUILD_MAIN_FILE := main.go
-# go build参数 -gcflags "-N -l" 参数 -N 来禁用优化，使用 -l 来禁用内联
-GOBUILD_ARGS := go build -v -ldflags "-s -w"
-# go test 相关
-GO_TEST_FUNC_NAME := $(test_func)
-GO_TEST_PKG_NAME := $(test_pkg)
-ifndef GO_TEST_PKG_NAME
-	GO_TEST_PKG_NAME := $(shell go list ./...)
-endif
-# Go的全局的环境变量。GOFLAGS必须清空，防止其他参数干扰
-GOFLAGS :=
-GO111MODULE := on
-GOPROXY := https://goproxy.cn,direct
-GOPRIVATE :=
-export GO111MODULE
-export GOPROXY
-export GOPRIVATE
-export GOFLAGS
 
-GO_FILES := $(shell find . -name '*.go' | grep -v vendor/ | grep -v _test.go)
+# go test 相关
+GO_TEST_PKG_NAME := $(shell go list ./...)
+
+# Go env
+export GO111MODULE := on
+export GOPROXY := https://goproxy.cn,direct
+export GOPRIVATE :=
+export GOFLAGS :=
 
 # 防止本地文件有重名的问题
-.PHONY : all build fmt gofmt goimports golint clean get test testall clear
+.PHONY : all init build fmt clean  clean test testall clear help
 
 # make默认启动
 all: build
 
-# go build
-build: clean fmt
-	$(GOBUILD_ARGS) $(GOMOD_VENDOR) -o $(GOBUILD_OUT_FILE) $(GOBUILD_MAIN_FILE)
+init: ## init
+	go mod download
+	@if [ ! -e $(shell go env GOPATH)/bin/golangci-lint ]; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.41.1; fi
 
-fmt: gofmt goimports golint clear
+build: clean fmt ## build
+	 go build -v -ldflags "-s -w"  -o bin/go-tool main.go
 
-gofmt:
-	@$(foreach var,$(GO_FILES),echo gofmt -d -w  $(var);gofmt -d -w  $(var);)
-
-goimports:
-	@if [ ! -d $(PROJECT_DIR)/bin ]; then mkdir -p $(PROJECT_DIR)/bin; fi
-	@if [ ! -e $(PROJECT_DIR)/bin/goimports ]; then curl -o $(PROJECT_DIR)/bin/goimports https://anthony-wangpan.oss-accelerate.aliyuncs.com/software/2020/12-29/788bd0e30957478488d4159859d29a0e && chmod 0744 $(PROJECT_DIR)/bin/goimports; fi
-	@$(foreach var,$(GO_FILES),echo goimports -d -w $(var);$(PROJECT_DIR)/bin/goimports -d -w $(var);)
-
-govet:
-	@$(foreach var,$(GO_FILES),echo go vet $(GOMOD_VENDOR) $(var);go vet $(GOMOD_VENDOR) $(var);)
-
-golint:
-	@if [ ! -d $(PROJECT_DIR)/bin ]; then mkdir -p $(PROJECT_DIR)/bin; fi
-	@if [ ! -e $(PROJECT_DIR)/bin/golint ]; then curl -o $(PROJECT_DIR)/bin/golint https://anthony-wangpan.oss-accelerate.aliyuncs.com/software/2020/12-30/6fda119141b84c77b0924e9d140704d0 && chmod 0744 $(PROJECT_DIR)/bin/golint; fi
-	@$(foreach var,$(GO_FILES),echo golint $(var);$(PROJECT_DIR)/bin/golint $(var);)
-
+fmt:
+	$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$  --disable-all --enable govet --enable gofmt --enable goimports --enable godot
 clean:
-	$(RM) -r $(GOBUILD_OUT_FILE) coverage.txt
+	$(RM) -r bin/go-tool coverage.txt
 
 get:
 	go get -u -v $(import)
 	go mod download
 
-test: clean
-	go test -v -cover -coverprofile=coverage.txt -covermode=atomic -run $(GO_TEST_FUNC_NAME) $(GO_TEST_PKG_NAME)
+test: clean ## test
+	go test -v -cover -coverprofile=coverage.txt -covermode=atomic -run $(test_func) $(test_pkg)
 	go tool cover -html=coverage.txt
 
-testall: clean
+testall: clean ## test all
 	go test -v -cover -coverprofile=coverage.txt -covermode=atomic ./...
 	go tool cover -html=coverage.txt
 
-clear:
+clear: ## 清空敏感文字
 	go build -v -o clear-tool clear/clear.go
 	./clear-tool
 
-docker:
-	docker run --rm -it --name go-tool -v $(PROJECT_DIR):/root/go/code  fanhaodong/golang:1.13.5 /bin/bash
-
-exec:
-	docker exec -it  go-tool /bin/bash
+help: ## 帮助
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {sub("\\\\n",sprintf("\n%22c"," "), $$2);printf " \033[36m%-20s\033[0m  %s\n", $$1, $$2}' $(MAKEFILE_LIST)

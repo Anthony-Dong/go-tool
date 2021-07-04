@@ -7,7 +7,7 @@ import (
 )
 
 // file-name 文件
-// path   file-name的位置
+// path   file-name的位置.
 func GetFileRelativePath(fileName string, path string) (string, error) {
 	var err error
 	if fileName, err = AbsPath(fileName); err != nil {

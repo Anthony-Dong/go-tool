@@ -71,7 +71,7 @@ type IgnoreParser interface {
 ////////////////////////////////////////////////////////////
 
 // This function pretty much attempts to mimic the parsing rules
-// listed above at the start of this file
+// listed above at the start of this file.
 func getPatternFromLine(line string) (*regexp.Regexp, bool) {
 	// Trim OS-specific carriage returns.
 	line = strings.TrimRight(line, "\r")

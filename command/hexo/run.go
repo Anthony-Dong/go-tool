@@ -216,7 +216,7 @@ func Run(ctx context.Context, dir string, targetDir string, firmCode []string) e
 	return nil
 }
 
-// 是否有
+// 是否有.
 func CheckFileHasFirmCode(fileName string, content []string, firmCode []string) error {
 	if firmCode == nil || len(firmCode) == 0 || content == nil || len(content) == 0 {
 		return nil
@@ -234,7 +234,7 @@ func CheckFileHasFirmCode(fileName string, content []string, firmCode []string) 
 	return nil
 }
 
-// true 表示是
+// true 表示是.
 func CheckFileCanHexoPre(fileName string) bool {
 	file, err := os.Open(fileName)
 	if err != nil {

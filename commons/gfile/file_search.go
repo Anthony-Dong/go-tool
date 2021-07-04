@@ -18,7 +18,7 @@ var (
 )
 
 /**
-获取全部的文件
+获取全部的文件.
 */
 type FilterFile func(fileName string) bool
 
@@ -40,7 +40,7 @@ func GetAllFiles(dirPth string, filter FilterFile) ([]string, error) {
 }
 
 /**
-替换文件中的字符
+替换文件中的字符.
 */
 func ReplaceFileContent(old []string, new string, fileName string) error {
 	if len(old) == 0 {
@@ -115,7 +115,7 @@ func WriteFile(writer io.Writer, body []string) error {
 	return nil
 }
 
-// V2
+// V2.
 func ReplaceFileContentV2(keyword []string, file io.Reader) ([]string, bool, error) {
 	if file == nil {
 		return nil, false, errors.New("file is nil")

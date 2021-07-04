@@ -5,7 +5,7 @@ import (
 )
 
 /**
-可以安全的操作
+可以安全的操作.
 */
 func Slice2String(body []byte) string {
 	if body == nil || len(body) == 0 {
@@ -21,7 +21,7 @@ type _string struct {
 
 /**
 1、可以安全的转换为切片
-2、转换后的切片可以进行修改操作
+2、转换后的切片可以进行修改操作.
 */
 func String2Slice(body string) []byte {
 	if body == "" {

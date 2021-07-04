@@ -8,7 +8,7 @@ import (
 )
 
 /**
-所有的command 都需要实现这个
+所有的command 都需要实现这个.
 */
 type Command interface {
 	Run(context *cli.Context) error
@@ -17,7 +17,7 @@ type Command interface {
 }
 
 /**
-创建 command
+创建 command.
 */
 func NewCommand(name, desc string, command Command) *cli.Command {
 	return &cli.Command{

@@ -19,7 +19,7 @@ func main() {
 	clear()
 }
 
-// 清楚代码的关键字
+// 清楚代码的关键字.
 func clear() {
 	var (
 		// 检测目录
@@ -118,7 +118,7 @@ func PrintRelativeFile(wg *sync.WaitGroup, allFile []string, absPath string) {
 }
 
 // file-name 文件
-// path   file-name的位置
+// path   file-name的位置.
 func GetFileRelativePath(fileName string, path string) string {
 	fileName = AbsPath(fileName)
 	path = AbsPath(path)
@@ -201,7 +201,7 @@ func ReadFileLine(file io.Reader, foo func(line string) error) error {
 	return nil
 }
 
-// 转换成 cli命令的 多个条件描述文本，例如 k1,k2 => "k1"|"k2"
+// 转换成 cli命令的 多个条件描述文本，例如 k1,k2 => "k1"|"k2".
 func ToCliMultiDescString(slice []string) string {
 	if slice == nil || len(slice) == 0 {
 		return ""
@@ -291,7 +291,7 @@ type IgnoreParser interface {
 ////////////////////////////////////////////////////////////
 
 // This function pretty much attempts to mimic the parsing rules
-// listed above at the start of this file
+// listed above at the start of this file.
 func getPatternFromLine(line string) (*regexp.Regexp, bool) {
 	// Trim OS-specific carriage returns.
 	line = strings.TrimRight(line, "\r")

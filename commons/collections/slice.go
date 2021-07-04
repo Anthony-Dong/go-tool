@@ -9,7 +9,7 @@ import (
 	"github.com/juju/errors"
 )
 
-// 将 map 的key 拿出来 转换成 string
+// 将 map 的key 拿出来 转换成 string.
 func GetMapKeysToString(obj interface{}) (list []string, err error) {
 	if obj == nil {
 		return nil, errors.New("the obj is nil can not get keys")
@@ -29,7 +29,7 @@ func GetMapKeysToString(obj interface{}) (list []string, err error) {
 	return result, nil
 }
 
-// 转换成 cli命令的 多个条件描述文本，例如 k1,k2 => "k1"|"k2"
+// 转换成 cli命令的 多个条件描述文本，例如 k1,k2 => "k1"|"k2".
 func ToCliMultiDescString(slice []string) string {
 	if slice == nil || len(slice) == 0 {
 		return ""

@@ -13,7 +13,7 @@ import (
 )
 
 /**
-判断文件是否存在
+判断文件是否存在.
 */
 func Exist(filename string) bool {
 	_, err := os.Stat(filename)
@@ -21,14 +21,14 @@ func Exist(filename string) bool {
 }
 
 /**
-获取文件路径
+获取文件路径.
 */
 func GetFileDir(path string) string {
 	return filepath.Dir(path)
 }
 
 /**
-获取文件的绝对路径
+获取文件的绝对路径.
 */
 func GetFileAbsPath(path string) (string, error) {
 	if !Exist(path) {
@@ -38,7 +38,7 @@ func GetFileAbsPath(path string) (string, error) {
 }
 
 /**
-获取文件名和文件后缀
+获取文件名和文件后缀.
 */
 func GetFilePrefixAndSuffix(filename string) (prefix, suffix string) {
 	filename = filepath.Base(filename)
@@ -51,7 +51,7 @@ func GetFilePrefixAndSuffix(filename string) (prefix, suffix string) {
 }
 
 /**
-获取 home path
+获取 home path.
 */
 func HomePath() string {
 	path, _ := exec.LookPath(os.Args[0])
