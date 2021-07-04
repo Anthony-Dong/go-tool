@@ -44,7 +44,7 @@ check: ## check this project bugs
 	--enable errcheck
 
 clean: ## clear not useful file
-	$(RM) -r bin/go-tool coverage.txt
+	$(RM) -r bin coverage.txt clear-tool
 
 test: clean ## go test
 	go test -v -cover -coverprofile=coverage.txt -covermode=atomic -run $(test_func) $(test_pkg)
