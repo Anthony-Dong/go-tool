@@ -4,7 +4,7 @@
 # Version  :1.0                                         #
 # Date     :2020-12-17                                  #
 # Author   :fanhaodong516@gmail.com                     #
-# Usage    :make help		   		                    #
+# Usage    :make help									#
 # #######################################################
 
 # dir
@@ -20,7 +20,7 @@ export GOPRIVATE :=
 export GOFLAGS :=
 
 # PHONY
-.PHONY : all init build fmt check clean test testall clear help
+.PHONY : all init build fmt check clean test testall help
 
 all: build ## Let's go!
 
@@ -46,17 +46,12 @@ check: ## check this project bugs
 clean: ## clear not useful file
 	$(RM) -r bin coverage.txt clear-tool
 
-test: clean ## go test
-	go test -v -cover -coverprofile=coverage.txt -covermode=atomic -run $(test_func) $(test_pkg)
-	go tool cover -html=coverage.txt
+test: ## go test
+	go test -v -count=1 -run $(func) $(pkg)
 
-testall: clean ## go test for the package
-	go test -v -cover -coverprofile=coverage.txt -covermode=atomic ./...
+testall: ## go test for the package
+	go test -v -cover -coverprofile=coverage.txt -covermode=atomic -count=1 ./...
 	go tool cover -html=coverage.txt
-
-clear: ## the clear tool
-	go build -v -o clear-tool clear/clear.go
-	./clear-tool
 
 help: ## help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {sub("\\\\n",sprintf("\n%22c"," "), $$2);printf " \033[36m%-20s\033[0m  %s\n", $$1, $$2}' $(MAKEFILE_LIST)

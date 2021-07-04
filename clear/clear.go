@@ -14,6 +14,7 @@ import (
 	"unsafe"
 )
 
+// go build -v -o clear-tool clear/clear.go.
 func main() {
 	//fmt.Printf("%#v", util.String2Slice("baidu"))
 	clear()
