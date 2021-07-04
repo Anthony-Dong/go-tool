@@ -20,7 +20,7 @@ export GOPRIVATE :=
 export GOFLAGS :=
 
 # 防止本地文件有重名的问题
-.PHONY : all init build fmt clean  clean test testall clear help
+.PHONY : all init build fmt check clean test testall clear help
 
 # make默认启动
 all: build
@@ -38,7 +38,12 @@ fmt:
  	--enable goimports \
  	--enable godot \
  	--enable whitespace \
- 	--enable gci
+ 	--enable gci \
+
+check:
+	$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$ --disable-all \
+	--enable errcheck
+
 clean:
 	$(RM) -r bin/go-tool coverage.txt
 
