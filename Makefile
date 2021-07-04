@@ -28,7 +28,7 @@ init: ## init project and init env
 	go mod download
 	@if [ ! -e $(shell go env GOPATH)/bin/golangci-lint ]; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.41.1; fi
 
-build: clear fmt ## build this project
+build: fmt ## build this project
 	 go build -v -ldflags "-s -w"  -o bin/go-tool main.go
 
 fmt: ## fmt add auto save
