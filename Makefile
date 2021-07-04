@@ -33,7 +33,12 @@ build: clean fmt ## build
 	 go build -v -ldflags "-s -w"  -o bin/go-tool main.go
 
 fmt:
-	$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$  --disable-all --enable govet --enable gofmt --enable goimports --enable godot
+	$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$  --disable-all --enable govet \
+ 	--enable gofmt \
+ 	--enable goimports \
+ 	--enable godot \
+ 	--enable whitespace \
+ 	--enable gci
 clean:
 	$(RM) -r bin/go-tool coverage.txt
 

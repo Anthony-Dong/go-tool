@@ -103,7 +103,6 @@ func CheckFile(wg *sync.WaitGroup, firmCode []string, fileName string) {
 		}); err != nil {
 			panic(fileName)
 		}
-
 	}(fileName)
 }
 
