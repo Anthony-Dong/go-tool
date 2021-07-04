@@ -1,11 +1,11 @@
 package log
 
 import (
-	logger2 "github.com/anthony-dong/go-tool/commons/logger"
+	"github.com/anthony-dong/go-tool/commons/logger"
 )
 
 var (
-	log = logger2.NewStdOutLogger(logger2.NameOp("[GO-TOOL]"))
+	log = logger.NewStdOutLogger(logger.NameOp("[GO-TOOL]"))
 )
 
 var (

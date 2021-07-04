@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/anthony-dong/go-tool/commons/codec/gjson"
-
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
 	"github.com/juju/errors"
 )
 

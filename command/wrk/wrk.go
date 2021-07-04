@@ -11,8 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/juju/errors"
-
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
 	"github.com/anthony-dong/go-tool/command/log"
@@ -20,6 +18,7 @@ import (
 	"github.com/anthony-dong/go-tool/commons/collections"
 	"github.com/anthony-dong/go-tool/commons/ghttp"
 	"github.com/anthony-dong/go-tool/commons/gtime"
+	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
 

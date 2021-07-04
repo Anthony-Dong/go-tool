@@ -3,11 +3,10 @@ package hexo
 import (
 	"fmt"
 
-	"github.com/anthony-dong/go-tool/commons/codec/gjson"
-	"github.com/anthony-dong/go-tool/commons/gfile"
-
 	"github.com/anthony-dong/go-tool/command"
 	"github.com/anthony-dong/go-tool/command/api"
+	"github.com/anthony-dong/go-tool/commons/codec/gjson"
+	"github.com/anthony-dong/go-tool/commons/gfile"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )

@@ -7,11 +7,9 @@ import (
 	"path/filepath"
 
 	"github.com/anthony-dong/go-tool/commons/gfile"
-	logger2 "github.com/anthony-dong/go-tool/commons/logger"
-
+	"github.com/anthony-dong/go-tool/commons/logger"
 	"github.com/juju/errors"
 	"github.com/tidwall/gjson"
-
 	"github.com/urfave/cli/v2"
 )
 
@@ -24,7 +22,7 @@ var (
 	GlobalFlag = []cli.Flag{
 		&cli.StringFlag{
 			Name:     logLevelFlag,
-			Usage:    fmt.Sprintf("Set the logging level (%s)", logger2.LogLevelToString()),
+			Usage:    fmt.Sprintf("Set the logging level (%s)", logger.LogLevelToString()),
 			Required: false,
 			Value:    "debug",
 		},

@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/anthony-dong/go-tool/commons/gstring"
-
 	"github.com/juju/errors"
 )
 

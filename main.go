@@ -5,24 +5,19 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/anthony-dong/go-tool/command/wrk"
-
-	logger2 "github.com/anthony-dong/go-tool/commons/logger"
-
-	"github.com/anthony-dong/go-tool/command/hexo"
-
-	"github.com/anthony-dong/go-tool/command/markdown"
-
-	"github.com/anthony-dong/go-tool/command/api"
-
 	"github.com/anthony-dong/go-tool/command"
+	"github.com/anthony-dong/go-tool/command/api"
+	"github.com/anthony-dong/go-tool/command/hexo"
+	"github.com/anthony-dong/go-tool/command/markdown"
 	"github.com/anthony-dong/go-tool/command/upload"
+	"github.com/anthony-dong/go-tool/command/wrk"
+	"github.com/anthony-dong/go-tool/commons/logger"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
 
 var (
-	log = logger2.NewStdOutLogger(logger2.NameOp("[GO-TOOL]"))
+	log = logger.NewStdOutLogger(logger.NameOp("[GO-TOOL]"))
 )
 
 func main() {
