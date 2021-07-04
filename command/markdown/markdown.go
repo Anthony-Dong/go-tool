@@ -17,6 +17,7 @@ import (
 	"github.com/anthony-dong/go-tool/commons/collections"
 	"github.com/anthony-dong/go-tool/commons/gfile"
 	"github.com/anthony-dong/go-tool/commons/git"
+	"github.com/bytedance/gopkg/collection/skipset"
 	"github.com/juju/errors"
 	"github.com/urfave/cli/v2"
 )
@@ -188,8 +189,20 @@ func (m *markdownCommand) getReadmeFileInfo() (*readmeFileInfo, error) {
 		file = strings.TrimPrefix(file, m.Dir)
 		return fmt.Sprintf("- [%s](.%s)\n", file, digest.Base64Encode(file))
 	}
+	order := func(files []string) []string {
+		l := skipset.NewString()
+		for _, elem := range files {
+			l.Add(elem)
+		}
+		result := make([]string, 0, len(files))
+		l.Range(func(value string) bool {
+			result = append(result, value)
+			return true
+		})
+		return result
+	}
 	// 遍历写
-	for _, elem := range newFiles {
+	for _, elem := range order(newFiles) {
 		_, err := builder.WriteString(url(elem))
 		if err != nil {
 			return nil, errors.Trace(err)

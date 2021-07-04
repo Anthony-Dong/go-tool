@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.4+incompatible
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
+	github.com/bytedance/gopkg v0.0.0-20210623111210-585986c1961b
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/fatih/color v1.10.0
 	github.com/google/uuid v1.1.4
