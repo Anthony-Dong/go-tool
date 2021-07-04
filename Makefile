@@ -32,7 +32,7 @@ build: clear fmt ## build this project
 	 go build -v -ldflags "-s -w"  -o bin/go-tool main.go
 
 fmt: ## fmt add auto save
-	$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$  --disable-all --enable govet \
+	@$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$  --disable-all --enable govet \
  	--enable gofmt \
  	--enable goimports \
  	--enable godot \
@@ -40,7 +40,7 @@ fmt: ## fmt add auto save
  	--enable gci \
 
 check: ## check this project bugs
-	$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$ --disable-all \
+	@$(shell go env GOPATH)/bin/golangci-lint run --fix --skip-files _test.go$$ --disable-all \
 	--enable errcheck
 
 clean: ## clear not useful file
